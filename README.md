@@ -133,7 +133,6 @@ Smart-Course-Companion/
 ├── schema.sql
 ├── package.json
 ├── package-lock.json
-├── .env
 └── README.md
 
 ---
