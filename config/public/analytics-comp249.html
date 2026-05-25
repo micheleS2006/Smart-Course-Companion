@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Analytics</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/analytics.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <h2>Smart Course Companion</h2>
+        <ul>
+            <li><a href="/student/dashboard">Dashboard</a></li>
+            <li><a href="/MYCOURSES.html">My Courses</a></li>
+            <li><a href="/analytics.html">Analytics</a></li>
+        </ul>
+        <div class="nav-icons">
+            <div class="myaccount">
+                <a href="/student/settings-page">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png"
+                        alt="My Account">
+                </a>
+            </div>
+            <div class="logout">
+                <a href="/auth/logout">
+                    <img src="https://www.clipartmax.com/png/middle/36-367350_png-file-logout-icon.png"
+                        alt="Logout">
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="layout">
+        <aside class="sidebar" id="analyticsSidebar">
+            <h2 class="side-title">Courses</h2>
+            <a class="course-link active-course" href="analytics.html">All Courses</a>
+        </aside>
+
+        <main class="content">
+            <h1 id="analyticsHeading">Analytics Summary</h1>
+
+            <section id="summarySection">
+                <p id="analyticsEmptyState" hidden style="opacity:0.65; font-size:14px;">
+                    You have not enrolled in any courses yet.
+                </p>
+                <section class="summary-grid" id="summaryGrid"></section>
+            </section>
+
+            <section class="stats-grid" id="detailSection" hidden>
+                <div class="stat-card">
+                    <h2>Current Average</h2>
+                    <div class="stat-body" style="display:flex; gap:24px;">
+                        <div>
+                            <p style="font-size:11px; opacity:0.6; margin-bottom:4px;">Average</p>
+                            <div id="detailAverageRing" class="ring" style="--p:0;">
+                                <span class="ring-center" id="detailAverageValue">0%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <p style="font-size:11px; opacity:0.6; margin-bottom:4px;">GPA</p>
+                            <div id="detailGpaRing" class="ring" style="--p:0;">
+                                <span class="ring-center" id="detailGpaValue">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <h2>Assessment Completion</h2>
+                    <div class="stat-body">
+                        <div class="ring" id="detailCompletionRing" style="--p:0;">
+                            <span class="ring-center" id="detailCompletionValue">0 / 0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card wide">
+                    <h2>Performance Trend</h2>
+                    <div id="detailTrendBars">
+                        <p style="opacity:0.5;">No graded assessments yet.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="detailExportSection" hidden
+                style="margin-top:30px; padding:20px; background:rgba(255,255,255,0.1); border-radius:16px; border:1px solid rgba(150,120,220,0.3);">
+                <h3 style="margin-bottom:15px;">Export Grades</h3>
+                <p style="font-size:13px; opacity:0.6; margin-bottom:15px;">
+                    Download your grades for this course
+                </p>
+                <div style="display:flex; gap:12px;">
+                    <button onclick="exportCSV()"
+                        style="padding:10px 20px; background:#6a4fcf; color:white; border:none; border-radius:8px; cursor:pointer; font-size:14px;">
+                        Export CSV
+                    </button>
+                    <button onclick="exportPDF()"
+                        style="padding:10px 20px; background:#6a4fcf; color:white; border:none; border-radius:8px; cursor:pointer; font-size:14px;">
+                        Export PDF
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/nav-active.js"></script>
+    <script src="/analytics.js"></script>
+</body>
+</html>

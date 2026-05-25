@@ -1,0 +1,479 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* ── BASE ──
+   min-height: 100vh ensures the gradient always covers the full viewport
+   linear-gradient(135deg, ...) draws a diagonal gradient across three dark colors.
+*/
+html, body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f0c1a, #1a1040, #111827);
+    color: white;
+}
+
+/* TOP NAVIGATION BAR */
+
+/* backdrop-filter: blur() creates the frosted-glass effect by blurring
+   whatever is rendered behind the element. */
+ .TopNav {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(14px);        /* Creates a frosted glass effect, it blurs everything in the element */
+    -webkit-backdrop-filter: blur(14px); 
+    padding: 0 30px;
+    height: 52px; 
+    position: sticky;  /* As the user scroll the navigation bar will remain in place */
+    top: 0;
+    z-index: 100;  /* Nav bar will be on top of everything */
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+}
+
+.TopNav h2 {
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 28px 0 0;
+    white-space: nowrap;  /* Tells the browser, to not wrap text onto a new line, no matter how long it gets */
+    flex-shrink: 0;  /* Element will not shrink, hold size */
+}
+
+.TopNav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    gap: 4px;
+    flex: 1;  /* Element fill all available space */
+}
+
+.TopNav li {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 13px;
+    font-variant: small-caps;
+    padding: 6px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.2s;  /* Transition as you move to other pages name */
+    white-space: nowrap;
+    color: rgba(255, 255, 255, 0.6);
+    height: 32px;
+}
+
+.TopNav li:hover {
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+
+
+.TopNav a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ── Icons pinned to the far right ── */
+.TopNavIcons {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    
+}
+
+.lightmode {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.lightmode img {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    transition: background 0.2s, border-radius 0.2s;
+}
+.Logout img {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 5px;
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    transition: background 0.2s, border-radius 0.2s;
+}
+
+.lightmode img:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 12px;
+}
+
+/* MAIN LAYOUT */
+.MainContainer {
+    padding: 20px 60px 60px 60px;
+    box-sizing: border-box;
+}
+
+.CoursesDisplay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5em;
+    padding: 0;
+}
+
+/* GLASS CARDS
+   Uses the frosted-glass pattern  */
+.ManageCourses,
+.Assessments,
+.Examinations {
+    width: 90%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    padding: 24px;
+    box-sizing: border-box;
+    overflow-x: auto;          /* horizontal scroll on small screens instead of overflow */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* TABLE */
+
+/* border-collapse: separate is required to use border-spacing.
+   border-spacing: 0 8px adds 8px vertical gap between rows (acts as row padding)
+   without needing divs or margin. */
+table {
+    margin-top: 40px;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    width: 100%;
+    min-width: 500px; /* prevents columns from collapsing too small */
+}
+
+caption {
+    text-align: left;
+    padding-bottom: 14px;
+}
+
+caption h3 {
+    font-size: 18px;
+    color: white;
+    display: inline; /* keeps h3 and AddButton on the same line */
+    margin-right: 14px;
+}
+
+/* Header row — uses uppercase + letter-spacing for a "label" aesthetic */
+.Elements th {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 8px 14px;
+    text-align: center;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Data rows — tr:not(.Elements) targets all rows except the header.
+   Each cell gets a semi-transparent white background */
+tr:not(.Elements) th,
+tr:not(.Elements) td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.07);
+    color: rgba(255, 255, 255, 0.9);
+    transition: background 0.2s;
+}
+
+/* Rounded pill rows => since border-radius can't be set on <tr>,
+   the trick is to round only the first and last cell of each row.
+   This creates the illusion that the entire row has rounded corners. */
+tr:not(.Elements) th:first-child,
+tr:not(.Elements) td:first-child {
+    border-radius: 10px 0 0 10px; /* top-left and bottom-left only */
+}
+
+tr:not(.Elements) th:last-child,
+tr:not(.Elements) td:last-child {
+    border-radius: 0 10px 10px 0; /* top-right and bottom-right only */
+}
+
+/* Row hover highlight => targets all cells in the hovered row at once
+   using the parent tr:hover combined with child th/td selectors. */
+tr:not(.Elements):hover th,
+tr:not(.Elements):hover td {
+    background: rgba(74, 108, 247, 0.2);
+}
+
+/* Editable inline inputs, transparent so they blend into the table cell */
+.plain-text {
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 0;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    width: 100%;
+}
+
+/* description textarea, single line by default, expands on focus */
+.desc-field {
+    resize: none;
+    overflow: hidden;
+    height: 1.4em;
+    min-width: 140px;
+    transition: height 0.25s ease, background 0.2s;
+    line-height: 1.4;
+    display: block;
+}
+
+.desc-field:focus {
+    height: 80px;           /* expands when clicked */
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    outline: none;
+    padding: 4px 6px;
+}
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: transparent;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(255,255,255,0.5)'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    border: none;
+    color: rgba(255, 255, 255, 0.85);
+    padding: 4px 28px 4px 4px;
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+}
+
+select option {
+    background: #2d1f5e;
+    color: white;
+}
+
+/* TOGGLE SWITCHES
+   Pure CSS toggle 
+   Uses a hidden checkbox + label trick */
+.enable {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 60px;
+    height: 28px;
+    border-radius: 50px;
+    position: relative;
+    margin: auto;
+    transition: background 0.4s;
+}
+
+.enable label {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    cursor: pointer;
+}
+
+/* The sliding circle */
+p1 {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.5);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: .5s;
+}
+
+/* The status dot (red = off, teal = on) */
+p2 {
+    padding: 6px;
+    background: #ff6b6b;
+    position: absolute;
+    left: -47%;
+    top: 37%;
+    border-radius: 50%;
+    transition: .3s;
+}
+
+/* When checked: slide the circle right and turn the dot teal */
+#click1 { display: none; }
+#click1:checked ~ p1 { left: 34px; background: white; transition: .5s; }
+#click1:checked ~ p2 { background: #00cec9; transition: .3s; }
+
+#click2 { display: none; }
+#click2:checked ~ p1 { left: 34px; background: white; transition: .5s; }
+#click2:checked ~ p2 { background: #00cec9; transition: .3s; }
+
+#click3 { display: none; }
+#click3:checked ~ p1 { left: 34px; background: white; transition: .5s; }
+#click3:checked ~ p2 { background: #00cec9; transition: .3s; }
+
+/* BUTTONS */
+.AddButton {
+    display: inline-block;
+    padding: 8px 18px;
+    background: linear-gradient(90deg, #4a6cf7, #00cec9);
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.3s;
+    vertical-align: middle;
+}
+
+.AddButton:hover { opacity: 0.85; }
+
+.EditButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 8px;
+    background: rgba(74, 108, 247, 0.2);
+    border: 1px solid rgba(74, 108, 247, 0.35);
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.EditButton:hover {
+    background: linear-gradient(90deg, #4a6cf7, #00cec9);
+    border-color: transparent;
+}
+
+/* filter: brightness(0) invert(1) turns any colored icon pure white
+   without needing a separate white version of the image file. */
+.EditButton img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1);
+}
+
+.SaveButton {
+    display: inline-block;
+    padding: 12px 20px;
+    background: linear-gradient(90deg, #4a6cf7, #00cec9);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.SaveButton:hover { opacity: 0.85; }
+
+.CancelButton {
+    display: inline-block;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.CancelButton:hover { background: rgba(255, 255, 255, 0.16); }
+
+/* POPUP */
+.popup {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 999;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.popup:target {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Glass popup box , stronger blur than the cards to stand out from the page */
+.popup-inner {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    padding: 36px;
+    width: 45%;
+    max-width: 560px;
+    box-sizing: border-box;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+}
+
+.popup-inner h3 {
+    font-size: 22px;
+    color: white;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.popup-inner h3 img {
+    width: 24px;
+    height: 24px;
+}
+
+.popup-inner label {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 12px;
+    margin-bottom: 4px;
+}
+
+/* INPUT & TEXTAREA inside popups */
+.popup-inner input[type="text"],
+.popup-inner input[type="datetime-local"],
+.popup-inner textarea {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    color: white;
+    padding: 10px 14px;
+    box-sizing: border-box;
+}
+
+.popup-inner input[type="text"]::placeholder,
+.popup-inner textarea::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}

@@ -1,0 +1,448 @@
+/*  RESET & BASE  */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif; /* remove default browser styles */
+}
+
+html, body {
+    min-height: 100vh; /* covers full screen even with little content */
+    background: linear-gradient(135deg, #0f0c1a, #1a1040, #111827); /* dark diagonal gradient */
+    color: white;
+}
+
+
+/*  NAV  */
+.TopNav {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(14px); /* Creates a frosted glass effect, it blurs everything the element */
+    -webkit-backdrop-filter: blur(14px);
+    padding: 0 30px;
+    height: 52px;
+    position: sticky; /* As the user scroll the navigation bar will remain in place */
+    top: 0;
+    z-index: 100; /* Nav bar will be on top of everything */
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+}
+
+.TopNav h2 {
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 28px 0 0;
+    white-space: nowrap; /* Tells the browser, to not wrap text onto a new line, no matter how long it gets */
+    flex-shrink: 0; /* Element will not shrink, hold size */
+}
+
+.TopNav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    gap: 4px;
+    flex: 1; /* Element fill all available space */
+}
+
+.TopNav li {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 13px;
+    font-variant: small-caps;
+    padding: 6px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.2s; /* Transition as you move to other pages name */
+    white-space: nowrap;
+    color: rgba(255, 255, 255, 0.6);
+    height: 32px;
+}
+
+.TopNav li:hover {
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.TopNav a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Icons pinned to the far right */
+.TopNavIcons {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}
+
+.lightmode {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.lightmode img {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    transition: background 0.2s, border-radius 0.2s;
+}
+
+.Logout img {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 5px;
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    transition: background 0.2s, border-radius 0.2s;
+}
+
+.lightmode img:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 12px;
+}
+
+
+/* LAYOUT */
+.MainContainer {
+    padding: 20px 60px 60px;
+    box-sizing: border-box;
+}
+
+.PageCenter {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+}
+
+
+/* GLASS CARD */
+.GlassCard {
+    background: rgba(255, 255, 255, 0.06); /* see-through white tint */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 24px;
+    backdrop-filter: blur(10px); /* blurs background behind the card */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+.GlassCard h3 {
+    font-size: 17px;
+    color: white;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08); /* subtle divider under title */
+}
+
+
+/* SUMMARY BARS */
+.SummaryRow {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.SummaryPill {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 16px 18px;
+    text-align: center;
+    transition: background 0.2s;
+}
+
+.SummaryPill:hover {
+    background: rgba(74, 108, 247, 0.15);
+}
+
+.SummaryPill .pill-num {
+    font-size: 26px;
+    font-weight: 700;
+    background: linear-gradient(90deg, #4a6cf7, #00cec9);
+    -webkit-background-clip: text; /* clips gradient to text shape */
+    -webkit-text-fill-color: transparent; /* makes text color transparent so gradient shows */
+}
+
+.SummaryPill .pill-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+
+/* FILTER TABS */
+.CourseTabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.CourseTab {
+    padding: 7px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.05);
+    text-decoration: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.CourseTab:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.CourseTab.active {
+    background: linear-gradient(90deg, #4a6cf7, #00cec9); /* gradient for selected tab */
+    border-color: transparent;
+    color: white;
+}
+
+
+/* DEADLINE WARNING */
+.DeadlineStrip {
+    background: rgba(255, 107, 107, 0.08); /* subtle red tint */
+    border: 1px solid rgba(255, 107, 107, 0.25);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.DeadlineStrip p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.DeadlineStrip strong {
+    color: #ffaaaa; /* soft red for emphasis */
+}
+
+
+/* COURSE SECTION */
+.CourseSection {
+    margin-bottom: 28px;
+    scroll-margin-top: 70px; /* offset so section doesn't hide behind sticky nav */
+}
+
+.CourseSection:last-of-type {
+    margin-bottom: 0; /* removes extra space after last section */
+}
+
+.CourseSectionHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.CourseSectionHeader h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: white;
+}
+
+.CourseSectionHeader p {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.45);
+    margin-top: 2px;
+}
+
+
+/* BADGES */
+.CourseCodeBadge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.badge-soen {
+    background: rgba(74, 108, 247, 0.25);
+    border: 1px solid rgba(74, 108, 247, 0.4);
+    color: #a0b4ff; /* blue */
+}
+
+.badge-comp {
+    background: rgba(0, 206, 201, 0.2);
+    border: 1px solid rgba(0, 206, 201, 0.4);
+    color: #7fffff; /* teal */
+}
+
+.badge-engr {
+    background: rgba(253, 203, 110, 0.2);
+    border: 1px solid rgba(253, 203, 110, 0.4);
+    color: #fde68a; /* yellow */
+}
+
+
+/* PROGRESS BARS */
+.AssessmentBar {
+    margin-bottom: 14px;
+}
+
+.AssessmentBar:last-child {
+    margin-bottom: 0;
+}
+
+.BarTopRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 7px;
+}
+
+.BarName {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 600;
+}
+
+.BarCategory {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.4);
+    margin-left: 8px;
+    font-weight: normal;
+}
+
+.BarMeta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.BarPercent {
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.BarCount {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.45);
+    min-width: 100px;
+    text-align: right;
+}
+
+.StatusBadge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.status-high {
+    background: rgba(0, 206, 150, 0.2);
+    border: 1px solid rgba(0, 206, 150, 0.4);
+    color: #6fffd4; /* green */
+}
+
+.status-medium {
+    background: rgba(253, 203, 110, 0.2);
+    border: 1px solid rgba(253, 203, 110, 0.4);
+    color: #fde68a; /* yellow */
+}
+
+.status-low {
+    background: rgba(255, 107, 107, 0.2);
+    border: 1px solid rgba(255, 107, 107, 0.4);
+    color: #ffaaaa; /* red */
+}
+
+.BarTrack {
+    width: 100%;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    overflow: hidden; /* grey background of the bar */
+}
+
+.BarFill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.6s ease; /* colored part that fills the bar */
+}
+
+.fill-high {
+    background: linear-gradient(90deg, #4a6cf7, #00cec9); /* blue to teal */
+}
+
+.fill-medium {
+    background: linear-gradient(90deg, #f6d365, #fda085); /* yellow to orange */
+}
+
+.fill-low {
+    background: linear-gradient(90deg, #ff6b6b, #ee5a24); /* red to dark red */
+}
+
+
+/* DIVIDER */
+.SectionDivider {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    margin: 22px 0; /* thin line between sections */
+}
+
+
+/* EXPORT */
+.ExportRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.ExportRow p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.ExportButtons {
+    display: flex;
+    gap: 8px;
+}
+
+.BtnExport {
+    display: inline-block;
+    padding: 7px 16px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.BtnExport:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: white;
+}

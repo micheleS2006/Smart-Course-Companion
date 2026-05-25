@@ -1,0 +1,541 @@
+/* settings_admin.css — styles for the admin settings page */
+
+/* reset — clearing all default browser stuff so nothing looks off */
+
+
+/* ════════════════════════════════════
+   TOP NAVIGATION BAR
+══════════════════════════════════════ */
+.TopNav {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(14px);        /* Creates a frosted glass effect, it blurs everything the element */
+    -webkit-backdrop-filter: blur(14px); 
+    padding: 0 30px;
+    height: 52px; 
+    position: sticky;  /* As the user scroll the navigation bar will remain in place */
+    top: 0;
+    z-index: 100;  /* Nav bar will be on top of everything */
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+}
+
+.TopNav h2 {
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 28px 0 0;
+    white-space: nowrap;  /* Tells the browser, to not wrap text onto a new line, no matter how long it gets */
+    flex-shrink: 0;  /* Element will not shrink, hold size */
+}
+
+.TopNav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    gap: 4px;
+    flex: 1;  /* Element fill all available space */
+}
+
+.TopNav li {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 13px;
+    font-variant: small-caps;
+    padding: 6px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.2s;  /* Transition as you move to other pages name */
+    white-space: nowrap;
+    color: rgba(255, 255, 255, 0.6);
+    height: 32px;
+}
+
+.TopNav li:hover {
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+
+
+.TopNav a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ── Icons pinned to the far right ── */
+.TopNavIcons {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    
+}
+
+.lightmode {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.lightmode img {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    transition: background 0.2s, border-radius 0.2s;
+}
+.Logout img {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 5px;
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    transition: background 0.2s, border-radius 0.2s;
+}
+
+.lightmode img:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 12px;
+}
+
+
+
+
+
+
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* all my colors in one place, easy to change later */
+:root {
+  --bg: #0e0b1f;
+  --surface: rgba(255,255,255,0.05);
+  --border: rgba(255,255,255,0.10);
+  --border-bright: rgba(255,255,255,0.20);
+  --accent: #4a6cf7;
+  --accent2: #00cec9;
+  --text: #f0eeff;
+  --text-muted: rgba(240,238,255,0.5);
+  --text-dim: rgba(240,238,255,0.3);
+  --red: #ff4d6d;
+  --red-dim: rgba(255,77,109,0.08);
+  --red-border: rgba(255,77,109,0.25);
+  --radius: 16px;
+}
+
+/* base font, background, full height */
+body {
+  font-family: 'Sora', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* decorative background glow blobs — purely visual, doesn't block clicks */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(74,108,247,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(0,206,201,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(59,34,114,0.25) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* centers the content and adds padding so it doesn't touch the edges */
+.page {
+  position: relative;
+  z-index: 1; /* sits above the background blobs */
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 32px 80px;
+}
+
+/* the "Settings" title area at the top */
+.page-header { margin-bottom: 40px; }
+
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-header p {
+  margin-top: 6px;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 300;
+}
+
+/* ---- CARDS ---- */
+/* frosted glass look using a semi-transparent bg + blur */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(12px);
+  transition: border-color 0.3s;
+}
+
+.card:hover { border-color: var(--border-bright); } /* subtle glow on hover */
+
+/* icon + title row at the top of each card */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* colored square icon — I give each one a different gradient */
+.card-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.card-icon.blue   { background: linear-gradient(135deg, #4a6cf7, #6a8dff); }
+.card-icon.teal   { background: linear-gradient(135deg, #00cec9, #00b4aa); }
+.card-icon.orange { background: linear-gradient(135deg, #f59e0b, #f97316); }
+
+.card-header-text h3 { font-size: 16px; font-weight: 600; }
+.card-header-text p  { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+/* puts two cards side by side — used for courses + admin controls */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* ---- AVATAR ---- */
+.avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+/* circular initials avatar with gradient */
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4a6cf7, #00cec9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  position: relative; /* so the edit button can sit on top of it */
+  flex-shrink: 0;
+  letter-spacing: 1px;
+}
+
+/* small pencil button that overlaps the bottom-right of the avatar */
+.avatar-edit {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 22px;
+  height: 22px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  cursor: pointer;
+  border: 2px solid var(--bg); /* dark ring to separate it from the avatar */
+}
+
+.avatar-info h4 { font-size: 18px; font-weight: 600; }
+.avatar-info p  { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+/* role pill badge under the name */
+.badge {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  background: rgba(74,108,247,0.2);
+  color: #a0b4ff;
+  border: 1px solid rgba(74,108,247,0.3);
+}
+
+/* ---- FORM ---- */
+/* two-column grid for inputs, bio spans both with .full */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+
+label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+/* all inputs styled the same for consistency */
+input[type="text"],
+input[type="email"],
+textarea,
+select {
+  width: 100%;
+  padding: 11px 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'Sora', sans-serif;
+  font-size: 13px;
+  transition: border-color 0.2s, background 0.2s;
+  outline: none;
+  appearance: none; /* strips browser default styling */
+}
+
+/* blue highlight when you click into a field */
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent);
+  background: rgba(74,108,247,0.08);
+}
+
+/* custom dropdown arrow since I removed the default one */
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+select option { background: #1a1535; color: var(--text); }
+
+textarea {
+  resize: vertical; /* only height, not width */
+  min-height: 90px;
+  line-height: 1.5;
+}
+
+.form-actions { display: flex; gap: 12px; margin-top: 24px; }
+
+/* ---- BUTTONS ---- */
+.btn {
+  padding: 10px 22px;
+  border-radius: 10px;
+  border: none;
+  font-family: 'Sora', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary { background: linear-gradient(90deg, var(--accent), var(--accent2)); color: white; }
+.btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+
+.btn-ghost { background: rgba(255,255,255,0.07); color: var(--text-muted); border: 1px solid var(--border); }
+.btn-ghost:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+
+.btn-teal { background: linear-gradient(90deg, #00cec9, #00b4d8); color: white; }
+.btn-teal:hover { opacity: 0.88; transform: translateY(-1px); }
+
+/* ---- STATS ---- */
+/* three number boxes inside the Courses Taught card */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-box {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+/* gradient clipped to the text so the number looks colorful */
+.stat-val {
+  font-size: 28px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-label {
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+/* ---- TOGGLES ---- */
+/* each row = label on the left, switch on the right */
+.toggle-list { display: flex; flex-direction: column; }
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.toggle-row:last-of-type { border-bottom: none; }
+
+.toggle-info h4 { font-size: 14px; font-weight: 500; }
+.toggle-info p  { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+/* I hide the real checkbox and fake it with a styled pill */
+.toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.12); /* grey when off */
+  border-radius: 24px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* the sliding white dot */
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  left: 3px;
+  top: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.toggle input:checked + .toggle-slider { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+.toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+/* divider + button below the toggles */
+.apply-row {
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+}
+
+/* ---- DANGER ZONE ---- */
+/* red-tinted section for destructive actions */
+.danger-card {
+  background: var(--red-dim);
+  border: 1px solid var(--red-border);
+  border-radius: var(--radius);
+  padding: 32px;
+  margin-bottom: 24px;
+}
+
+.danger-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.danger-header h3 { font-size: 16px; font-weight: 700; color: var(--red); }
+
+.danger-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255,77,109,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.danger-desc { font-size: 13px; color: rgba(255,200,200,0.6); margin-bottom: 24px; }
+.danger-desc strong { color: rgba(255,180,180,0.9); }
+
+.danger-actions { display: flex; flex-direction: column; gap: 12px; }
+
+/* individual action row — subtle red background, gets slightly brighter on hover */
+.danger-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  background: rgba(255,77,109,0.06);
+  border: 1px solid rgba(255,77,109,0.15);
+  border-radius: 12px;
+  transition: background 0.2s;
+}
+
+.danger-action:hover { background: rgba(255,77,109,0.11); }
+
+.danger-action-info h4 { font-size: 14px; font-weight: 600; color: #ffb3c1; }
+.danger-action-info p  { font-size: 12px; color: rgba(255,200,200,0.5); margin-top: 3px; }
+
+/* inline warning text that says "this action is irreversible" */
+.irreversible { color: var(--red); font-weight: 600; }
+
+/* outlined red button for each danger action */
+.btn-danger {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,77,109,0.35);
+  background: rgba(255,77,109,0.13);
+  color: var(--red);
+  font-family: 'Sora', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.btn-danger:hover {
+  background: rgba(255,77,109,0.28);
+  border-color: var(--red);
+}

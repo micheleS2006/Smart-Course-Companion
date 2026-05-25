@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Courses</title>
+<link rel="stylesheet" href="/MYCOURSES.css">
+</head>
+
+<body>
+     <nav class="navbar">
+    <h2>Smart Course Companion</h2>
+    <ul>
+        <li><a href="/student/dashboard">Dashboard</a></li>
+        <li><a href="/MYCOURSES.html">My Courses</a></li>
+        <li><a href="/analytics.html">Analytics</a></li>
+    </ul>
+    <div class="nav-icons">
+        <div class="myaccount">
+            <a href="/student/settings-page">
+                <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" 
+                    alt="My Account"/>
+            </a>
+        </div>
+        <div class="logout">
+            <a href="/auth/logout">
+                <img src="https://www.clipartmax.com/png/middle/36-367350_png-file-logout-icon.png" 
+                    alt="Logout"/>
+            </a>
+        </div>
+    </div>
+</nav>
+
+
+<div class="page">
+
+    <div class="middle">
+
+        <aside class="sidebar">
+            <section class="agenda-panel">
+                <div class="agenda-header">
+                    <h3>Agenda</h3>
+                   
+                </div>
+
+                <div class="agenda-controls">
+                    <input type="text" id="agendaTaskInput" placeholder="Type a task..." aria-label="Task">
+                    <input type="color" id="agendaColorInput" value="#9a89d6" aria-label="Task color">
+                    <button id="agendaAddButton" type="button" aria-label="Add agenda task">+</button>
+                </div>
+
+                <p id="agendaMessage" class="agenda-message" aria-live="polite"></p>
+                <div class="agenda-divider" aria-hidden="true"></div>
+                <ul id="agendaList" class="agenda-list"></ul>
+            </section>
+        </aside>
+
+    <main class="main">
+
+        <div class="topbar">
+            <input type="text" id="search" placeholder="Search courses...">
+
+            <select id="sort">
+                <option value="card">Card View</option>
+                <option value="name">Course Name Only</option>
+            </select>
+        </div>
+
+        <section class="cards" id="courseContainer"></section>
+
+        <div class="archived-panel">
+            <button id="toggleArchived">Hidden Courses ▼</button>
+            <div id="archivedContainer" class="hidden cards"></div> 
+        </div>
+
+<div class="calendar-controls">
+    <div class="today-label">
+      <h3 id = "todayTitle"></h3>  
+    </div>
+</div>
+
+ 
+<div id="calendarContainer"></div>
+
+        <section class="enrollment-panel">
+            <div class="enrollment-card">
+                <h3 class="enrollment-title">Enroll in a Course</h3>
+                <div class="enrollment-fields">
+                    <div class="enrollment-field">
+                        <label for="enrollCourseCode">Course Code</label>
+                        <input type="text" id="enrollCourseCode" placeholder="e.g. SOEN 287">
+                    </div>
+                    <button id="enrollButton" type="button">Enroll</button>
+                </div>
+                <p id="enrollmentMessage" class="enrollment-message" aria-live="polite"></p>
+            </div>
+        </section>
+
+    </main>
+    </div>
+
+
+</div>
+
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <h3 id="modalTitle"></h3>
+        <button onclick="markDone()">Mark as Done</button>
+        <button onclick="closeModal()">Close</button> 
+    </div>
+</div>
+
+<script src="/nav-active.js"></script>
+<script src="/MYCOURSES.JS"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/student.css">
+    <title>Course Details</title>
+</head>
+
+<body>
+    <nav class="navbar">
+    <h2>Smart Course Companion</h2>
+    <ul>
+        <li><a href="/student/dashboard">Dashboard</a></li>
+        <li><a href="/MYCOURSES.html">My Courses</a></li>
+        <li><a href="/analytics.html">Analytics</a></li>
+    </ul>
+    <div class="nav-icons">
+        
+        <div class="myaccount">
+            <a href="/student/settings-page">
+                <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" 
+                    alt="My Account"/>
+            </a>
+        </div>
+        <div class="logout">
+            <a href="/auth/logout">
+                <img src="https://www.clipartmax.com/png/middle/36-367350_png-file-logout-icon.png" 
+                    alt="Logout"/>
+            </a>
+        </div>
+    </div>
+</nav>
+
+    <hr>
+
+    <div class="course">
+        <h1>ENGR 233 - APPLIED ADVANCED CALCULUS</h1>
+        <p><strong>Instructor:</strong> Dr. Michael Smith</p>
+        <p><strong>Term:</strong> Winter 2026</p>
+        <p id="courseAverage"><strong>Current Average: Loading...</strong></p>
+    </div>
+
+    <hr>
+
+    <div class="assessments">
+        <h2>Assessments
+            <button onclick="openModal()"
+                style="margin-left:15px; padding:8px 16px;
+                background:#6a4fcf; color:white; border:none;
+                border-radius:8px; cursor:pointer;">
+                + Add Assessment
+            </button>
+        </h2>
+
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Due</th>
+                <th>Weight</th>
+                <th>Earned</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Result</th>
+                <th>Actions</th>
+            </tr>
+            <tbody id="gradesBody">
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add Assessment Modal -->
+    <div id="addModal" style="display:none; position:fixed;
+        inset:0; background:rgba(0,0,0,0.5);
+        justify-content:center; align-items:center; z-index:999;">
+        <div style="background:white; padding:30px;
+            border-radius:16px; width:400px;">
+            <h3 style="margin-bottom:20px; color:#2d1b6e;">
+                Add Assessment
+            </h3>
+
+            <label>Name</label><br>
+            <input id="newName" type="text"
+                placeholder="Assessment name"
+                style="width:100%; margin-bottom:10px;
+                padding:8px; border-radius:8px;
+                border:1px solid #ccc;"><br>
+
+            <label>Type</label><br>
+            <select id="newCategory"
+                style="width:100%; margin-bottom:10px;
+                padding:8px; border-radius:8px;
+                border:1px solid #ccc;">
+                <option>Lab</option>
+                <option>Exam</option>
+                <option>Assignment</option>
+                <option>Quiz</option>
+                <option>Project</option>
+            </select><br>
+
+            <label>Due Date</label><br>
+            <input id="newDueDate" type="date"
+                style="width:100%; margin-bottom:10px;
+                padding:8px; border-radius:8px;
+                border:1px solid #ccc;"><br>
+
+            <label>Earned Marks</label><br>
+            <input id="newEarned" type="number" 
+                placeholder="Leave empty if not graded yet"
+                style="width:100%; margin-bottom:10px; 
+                padding:8px; border-radius:8px; 
+                border:1px solid #ccc;"><br>
+
+            <label>Weight (%)</label><br>
+            <input id="newWeight" type="number" min="0" max="100" step="0.01"
+                placeholder="Assessment ponderation"
+                style="width:100%; margin-bottom:10px;
+                padding:8px; border-radius:8px;
+                border:1px solid #ccc;"><br>
+
+            <label>Total Marks</label><br>
+            <input id="newTotal" type="number"
+                placeholder="Total marks"
+                style="width:100%; margin-bottom:10px;
+                padding:8px; border-radius:8px;
+                border:1px solid #ccc;"><br>
+
+            <label>Status</label><br>
+            <select id="newStatus"
+                style="width:100%; margin-bottom:20px;
+                padding:8px; border-radius:8px;
+                border:1px solid #ccc;">
+                <option>pending</option>
+                <option>completed</option>
+            </select><br>
+
+            <div style="display:flex; gap:10px;">
+                <button onclick="addAssessment()"
+                    style="flex:1; padding:10px; background:#6a4fcf;
+                    color:white; border:none; border-radius:8px;
+                    cursor:pointer;">Save</button>
+                <button onclick="closeModal()"
+                    style="flex:1; padding:10px;
+                    background:rgba(106,79,207,0.1);
+                    border:1px solid #6a4fcf; border-radius:8px;
+                    cursor:pointer;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/nav-active.js"></script>
+    <script src="/details.js"></script>
+</body>
+</html>

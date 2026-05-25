@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Courses Details</title>
+  <link rel="stylesheet" href="/Design CoursesPages.css" />
+  <style>
+    /* ── Toast notification ── */
+    #toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: rgba(20, 14, 50, 0.97);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 13px 22px;
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+      z-index: 9999;
+      transition: transform 0.35s ease, opacity 0.35s ease;
+      opacity: 0;
+      pointer-events: none;
+      backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+    }
+    #toast.show          { transform: translateX(-50%) translateY(0); opacity: 1; }
+    #toast.toast-success { border-color: rgba(0,206,201,0.55); }
+    #toast.toast-error   { border-color: rgba(255,107,107,0.55); }
+
+    /* ── Validation ── */
+    .field-error {
+      color: #ff8fa3;
+      font-size: 11px;
+      margin-top: 3px;
+      display: none;
+    }
+    .field-error.visible { display: block; }
+    .input-invalid {
+      border-color: rgba(255,107,107,0.75) !important;
+      background: rgba(255,107,107,0.07) !important;
+    }
+
+    /* ── Popup form styles ── */
+    .popup-inner label {
+      display: block;
+      font-size: 11px;
+      font-weight: bold;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      margin-top: 14px;
+      margin-bottom: 4px;
+    }
+    .popup-inner input[type="text"],
+    .popup-inner input[type="number"],
+    .popup-inner select,
+    .popup-inner textarea {
+      width: 100%;
+      padding: 10px 13px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 8px;
+      color: white;
+      font-size: 13px;
+      font-family: Arial, sans-serif;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.2s, background 0.2s;
+      appearance: none;
+    }
+    .popup-inner input[type="datetime-local"] {
+      width: 100%;
+      padding: 10px 13px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 8px;
+      color: white;
+      font-size: 13px;
+      font-family: Arial, sans-serif;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.2s, background 0.2s;
+      color-scheme: dark;
+    }
+    .popup-inner input:focus,
+    .popup-inner select:focus,
+    .popup-inner textarea:focus {
+      border-color: #4a6cf7;
+      background: rgba(74,108,247,0.09);
+    }
+    .popup-inner input::placeholder,
+    .popup-inner textarea::placeholder { color: rgba(255,255,255,0.25); }
+    .popup-inner select option { background: #1a1040; color: white; }
+    .popup-inner textarea { resize: vertical; min-height: 68px; }
+    .PopupButtons { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+
+    /* ── Loading state ── */
+    .is-loading { opacity: 0.6; pointer-events: none; cursor: not-allowed; }
+
+    /* ── Empty / error row ── */
+    .empty-row td {
+      color: rgba(255,255,255,0.3);
+      font-style: italic;
+      padding: 20px !important;
+      text-align: center;
+    }
+
+    /* ── Status dot ── */
+    .status-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+    .dot-on  { background: #00cec9; box-shadow: 0 0 6px #00cec9; }
+    .dot-off { background: #ff6b6b; box-shadow: 0 0 6px #ff6b6b; }
+
+    /* ── Delete button ── */
+    .DeleteButton {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      border-radius: 8px;
+      background: rgba(255,107,107,0.15);
+      border: 1px solid rgba(255,107,107,0.3);
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-left: 4px;
+    }
+    .DeleteButton:hover { background: rgba(255,107,107,0.35); }
+    .DeleteButton img { width: 18px; height: 18px; filter: brightness(0) invert(1); }
+  </style>
+</head>
+<body>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════════
+     POPUPS
+══════════════════════════════════════ -->
+
+<!-- ADD COURSE -->
+<div class="popup" id="addCourse">
+  <div class="popup-inner">
+    <h3>➕ Add New Course</h3>
+
+    <label>Course Code *</label>
+    <input type="text" id="add-code" placeholder="e.g. SOEN 287">
+    <div class="field-error" id="err-add-code">Course code is required (e.g. COMP 249)</div>
+
+    <label>Course Name *</label>
+    <input type="text" id="add-name" placeholder="e.g. Web Programming">
+    <div class="field-error" id="err-add-name">Course name is required</div>
+
+    <label>Instructor *</label>
+    <input type="text" id="add-instructor" placeholder="e.g. Dr. John Doe">
+    <div class="field-error" id="err-add-instructor">Instructor name is required</div>
+
+    <label>Term *</label>
+    <input type="text" id="add-term" placeholder="e.g. Winter 2026">
+    <div class="field-error" id="err-add-term">Term is required</div>
+
+    <label>Max Students *</label>
+    <input type="number" id="add-max" placeholder="e.g. 100" min="1" max="999">
+    <div class="field-error" id="err-add-max">Must be a number between 1 and 999</div>
+
+    <label>Status</label>
+    <select id="add-enabled">
+      <option value="1">Enabled</option>
+      <option value="0">Disabled</option>
+    </select>
+
+    <div class="PopupButtons">
+      <button class="SaveButton" id="btn-add-course" onclick="submitAddCourse()">Add Course</button>
+      <a href="#" class="CancelButton">Cancel</a>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT COURSE -->
+<div class="popup" id="editCourse">
+  <div class="popup-inner">
+    <h3>✏️ Edit Course</h3>
+    <input type="hidden" id="edit-course-id">
+
+    <label>Course Code *</label>
+    <input type="text" id="edit-code">
+    <div class="field-error" id="err-edit-code">Course code is required</div>
+
+    <label>Course Name *</label>
+    <input type="text" id="edit-name">
+    <div class="field-error" id="err-edit-name">Course name is required</div>
+
+    <label>Instructor *</label>
+    <input type="text" id="edit-instructor">
+    <div class="field-error" id="err-edit-instructor">Instructor name is required</div>
+
+    <label>Term *</label>
+    <input type="text" id="edit-term">
+    <div class="field-error" id="err-edit-term">Term is required</div>
+
+    <label>Max Students *</label>
+    <input type="number" id="edit-max" min="1" max="999">
+    <div class="field-error" id="err-edit-max">Must be a number between 1 and 999</div>
+
+    <label>Status</label>
+    <select id="edit-enabled">
+      <option value="1">Enabled</option>
+      <option value="0">Disabled</option>
+    </select>
+
+    <div class="PopupButtons">
+      <button class="SaveButton" id="btn-edit-course" onclick="submitEditCourse()">Save Changes</button>
+      <a href="#" class="CancelButton">Cancel</a>
+    </div>
+  </div>
+</div>
+
+<!-- ADD ASSESSMENT -->
+<div class="popup" id="addAssessment">
+  <div class="popup-inner">
+    <h3>➕ Add New Assessment</h3>
+
+    <label>Course Code *</label>
+    <input type="text" id="ass-course" placeholder="e.g. SOEN 287">
+    <div class="field-error" id="err-ass-course">Course code is required</div>
+
+    <label>Assessment Name *</label>
+    <input type="text" id="ass-name" placeholder="e.g. Project Delivery 1">
+    <div class="field-error" id="err-ass-name">Assessment name is required</div>
+
+    <label>Category *</label>
+    <select id="ass-category">
+      <option value="">— Select —</option>
+      <option value="Assignment">Assignments</option>
+      <option value="Lab">Labs</option>
+      <option value="Project">Projects</option>
+      <option value="Quiz">Quizzes</option>
+    </select>
+    <div class="field-error" id="err-ass-category">Please select a category</div>
+
+    <label>Released Date</label>
+    <input type="datetime-local" id="ass-released">
+
+    <label>Submission Deadline</label>
+    <input type="datetime-local" id="ass-deadline">
+
+    <label>Ponderation (%) *</label>
+    <input type="number" id="ass-weight" placeholder="e.g. 10" min="0" max="100">
+    <div class="field-error" id="err-ass-weight">Must be a number between 0 and 100</div>
+
+    <label>Description</label>
+    <textarea id="ass-desc" placeholder="Optional description..."></textarea>
+
+    <div class="PopupButtons">
+      <button class="SaveButton" id="btn-add-assessment" onclick="submitAddAssessment()">Add Assessment</button>
+      <a href="#" class="CancelButton">Cancel</a>
+    </div>
+  </div>
+</div>
+
+<!-- ADD EXAMINATION -->
+<div class="popup" id="addExaminations">
+  <div class="popup-inner">
+    <h3>➕ Add New Examination</h3>
+
+    <label>Course Code *</label>
+    <input type="text" id="exam-course" placeholder="e.g. SOEN 287">
+    <div class="field-error" id="err-exam-course">Course code is required</div>
+
+    <label>Examination Name *</label>
+    <input type="text" id="exam-name" placeholder="e.g. Midterm Exam">
+    <div class="field-error" id="err-exam-name">Examination name is required</div>
+
+    <label>Category *</label>
+    <select id="exam-category">
+      <option value="">— Select —</option>
+      <option value="Quiz">Quizzes</option>
+      <option value="Lab">Labs</option>
+      <option value="Midterm">Midterm</option>
+      <option value="Final">Final</option>
+    </select>
+    <div class="field-error" id="err-exam-category">Please select a category</div>
+
+    <label>Exam Date</label>
+    <input type="datetime-local" id="exam-date">
+
+    <label>Ponderation (%) *</label>
+    <input type="number" id="exam-weight" placeholder="e.g. 25" min="0" max="100">
+    <div class="field-error" id="err-exam-weight">Must be a number between 0 and 100</div>
+
+    <label>Description</label>
+    <textarea id="exam-desc" placeholder="Optional description..."></textarea>
+
+    <div class="PopupButtons">
+      <button class="SaveButton" id="btn-add-exam" onclick="submitAddExamination()">Add Examination</button>
+      <a href="#" class="CancelButton">Cancel</a>
+    </div>
+  </div>
+</div>
+
+<!-- TOP NAV -->
+<div class="TopNav">
+  <h2>Smart Course Companion</h2>
+  <ul>
+    <a href="/admin/dashboard"><li id="dashboard">DashBoard</li></a>
+    <a href="/admin/courses"><li id="courses" style="background-color:rgb(130,100,136);border-radius:15px;">Courses</li></a>
+    <a href="/admin/analytics"><li id="grades&charts">Analytics</li></a>
+    <a href="/admin/templates"><li id="Courses Template">Courses Template</li></a>
+    <a href="/admin/settings-page"><li id="Settings">Settings</li></a>
+  </ul>
+  <div class="TopNavIcons">
+    <div class="Logout"><a href="/auth/logout"><img src="https://www.clipartmax.com/png/middle/36-367350_png-file-logout-icon.png" alt="Logout icon"/></a></div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="MainContainer">
+  <div class="CoursesDisplay">
+
+    <!-- TABLE 1: COURSE MANAGEMENT -->
+    <div class="ManageCourses">
+      <table>
+        <caption>
+          <h3>Course Management</h3>
+          <a href="#addCourse" class="AddButton">+ Add Course</a>
+        </caption>
+        <thead>
+          <tr class="Elements">
+            <th>Course Code</th>
+            <th>Course Name</th>
+            <th>Term</th>
+            <th>Students Enrolled</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="courses-tbody">
+          <tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,0.3);padding:20px;font-style:italic;">Loading courses...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TABLE 2: ASSESSMENTS -->
+    <div class="Assessments">
+      <table>
+        <caption>
+          <h3>Assessments</h3>
+          <a href="#addAssessment" class="AddButton">+ Add Assessment</a>
+        </caption>
+        <thead>
+          <tr class="Elements">
+            <th>Course Code</th>
+            <th>Assessment Name</th>
+            <th>Categories</th>
+            <th>Released Date</th>
+            <th>Submission Deadline</th>
+            <th>Ponderation</th>
+            <th>Description</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="assessments-tbody">
+          <tr><td colspan="8" style="text-align:center;color:rgba(255,255,255,0.3);padding:20px;font-style:italic;">Loading assessments...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TABLE 3: EXAMINATIONS -->
+    <div class="Examinations">
+      <table>
+        <caption>
+          <h3>Examinations</h3>
+          <a href="#addExaminations" class="AddButton">+ Add Examination</a>
+        </caption>
+        <thead>
+          <tr class="Elements">
+            <th>Course Code</th>
+            <th>Examination Name</th>
+            <th>Categories</th>
+            <th>Exam Date</th>
+            <th>Ponderation</th>
+            <th>Description</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="examinations-tbody">
+          <tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,0.3);padding:20px;font-style:italic;">Loading examinations...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const API = '/api';
+
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = (type === 'success' ? '✅ ' : '❌ ') + msg;
+    t.className = `show toast-${type}`;
+    setTimeout(() => { t.className = ''; }, 3000);
+  }
+
+  function setError(inputId, errorId, hasError) {
+    document.getElementById(inputId).classList.toggle('input-invalid', hasError);
+    document.getElementById(errorId).classList.toggle('visible', hasError);
+  }
+
+  function clearErrors(pairs) {
+    pairs.forEach(([i, e]) => setError(i, e, false));
+  }
+
+  function setLoading(btnId, loading) {
+    const btn = document.getElementById(btnId);
+    btn.classList.toggle('is-loading', loading);
+    if (loading) {
+      btn.dataset.orig = btn.textContent;
+      btn.textContent = '⏳ Saving...';
+    } else {
+      btn.textContent = btn.dataset.orig || 'Save';
+    }
+  }
+
+  function esc(s) {
+    return String(s).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  }
+
+  function fmtDate(d) {
+    if (!d) return '—';
+    return new Date(d).toLocaleDateString('en-CA');
+  }
+
+  function toDateTimeLocalValue(d) {
+  if (!d) return '';
+  try {
+    let s = String(d).trim().replace(',', '').replace(' ', 'T');
+    const match = s.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/);
+    if (match) return `${match[1]}T${match[2]}`;
+    const date = new Date(d);
+    if (isNaN(date.getTime())) return '';
+    const pad = n => String(n).padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  } catch { return ''; }
+}
+
+  // COURSES
+
+  async function loadCourses() {
+    try {
+      const res = await fetch(`${API}/courses`);
+      const courses = await res.json();
+      renderCourses(courses);
+    } catch {
+      document.getElementById('courses-tbody').innerHTML =
+        `<tr><td colspan="6" style="text-align:center;color:#ff8fa3;padding:20px;">❌ Cannot connect to server. Is it running?</td></tr>`;
+    }
+  }
+
+  function renderCourses(courses) {
+    const tbody = document.getElementById('courses-tbody');
+    if (!courses.length) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,0.3);padding:20px;font-style:italic;">No courses yet. Add one above!</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = courses.map(c => `
+      <tr>
+        <th>${c.course_code}</th>
+        <td>${c.course_name}</td>
+        <td>${c.term}</td>
+        <td>${Number(c.enrollment_count || 0)}</td>
+        <td>
+          <span class="status-dot ${c.is_enabled ? 'dot-on' : 'dot-off'}"></span>
+          ${c.is_enabled ? 'Enabled' : 'Disabled'}
+        </td>
+        <td>
+          <a href="#editCourse">
+            <button class="EditButton" onclick="openEditCourse(${c.id},'${esc(c.course_code)}','${esc(c.course_name)}','${esc(c.instructor)}','${esc(c.term)}',${c.max_students},${c.is_enabled})">
+              <img src="https://icons.veryicon.com/png/o/miscellaneous/two-color-webpage-small-icon/edit-247.png"/>
+            </button>
+          </a>
+          <button class="DeleteButton" onclick="deleteCourse(${c.id},'${esc(c.course_code)}')">
+            <img src="https://cdn-icons-png.flaticon.com/512/1214/1214428.png" alt="delete"/>
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function validateCourseForm(p) {
+    const code = document.getElementById(`${p}-code`).value.trim();
+    const name = document.getElementById(`${p}-name`).value.trim();
+    const inst = document.getElementById(`${p}-instructor`).value.trim();
+    const term = document.getElementById(`${p}-term`).value.trim();
+    const max = document.getElementById(`${p}-max`).value.trim();
+
+    setError(`${p}-code`, `err-${p}-code`, !code);
+    setError(`${p}-name`, `err-${p}-name`, !name);
+    setError(`${p}-instructor`, `err-${p}-instructor`, !inst);
+    setError(`${p}-term`, `err-${p}-term`, !term);
+    setError(`${p}-max`, `err-${p}-max`, !max || isNaN(max) || +max < 1 || +max > 999);
+
+    return code && name && inst && term && max && !isNaN(max) && +max >= 1 && +max <= 999;
+  }
+
+  async function submitAddCourse() {
+    if (!validateCourseForm('add')) return;
+    setLoading('btn-add-course', true);
+    try {
+      const res = await fetch(`${API}/courses`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          course_code: document.getElementById('add-code').value.trim(),
+          course_name: document.getElementById('add-name').value.trim(),
+          instructor: document.getElementById('add-instructor').value.trim(),
+          term: document.getElementById('add-term').value.trim(),
+          max_students: +document.getElementById('add-max').value,
+          is_enabled: +document.getElementById('add-enabled').value
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      showToast('Course added!');
+      window.location.hash = '';
+      ['add-code','add-name','add-instructor','add-term','add-max'].forEach(id => document.getElementById(id).value = '');
+      loadCourses();
+    } catch (err) {
+      showToast('Failed: ' + err.message, 'error');
+    } finally {
+      setLoading('btn-add-course', false);
+    }
+  }
+
+  function openEditCourse(id, code, name, instructor, term, max, enabled) {
+    document.getElementById('edit-course-id').value = id;
+    document.getElementById('edit-code').value = code;
+    document.getElementById('edit-name').value = name;
+    document.getElementById('edit-instructor').value = instructor;
+    document.getElementById('edit-term').value = term;
+    document.getElementById('edit-max').value = max;
+    document.getElementById('edit-enabled').value = enabled;
+    clearErrors([
+      ['edit-code','err-edit-code'],
+      ['edit-name','err-edit-name'],
+      ['edit-instructor','err-edit-instructor'],
+      ['edit-term','err-edit-term'],
+      ['edit-max','err-edit-max']
+    ]);
+  }
+
+  async function submitEditCourse() {
+    if (!validateCourseForm('edit')) return;
+    const id = document.getElementById('edit-course-id').value;
+    setLoading('btn-edit-course', true);
+    try {
+      const res = await fetch(`${API}/courses/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          course_code: document.getElementById('edit-code').value.trim(),
+          course_name: document.getElementById('edit-name').value.trim(),
+          instructor: document.getElementById('edit-instructor').value.trim(),
+          term: document.getElementById('edit-term').value.trim(),
+          max_students: +document.getElementById('edit-max').value,
+          is_enabled: +document.getElementById('edit-enabled').value
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      showToast('Course updated!');
+      window.location.hash = '';
+      loadCourses();
+    } catch (err) {
+      showToast('Failed: ' + err.message, 'error');
+    } finally {
+      setLoading('btn-edit-course', false);
+    }
+  }
+
+  async function deleteCourse(id, code) {
+    if (!confirm(`Delete course "${code}"? This cannot be undone.`)) return;
+    try {
+      const res = await fetch(`${API}/courses/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      showToast(`"${code}" deleted.`);
+      loadCourses();
+    } catch (err) {
+      showToast('Failed: ' + err.message, 'error');
+    }
+  }
+
+  // ASSESSMENTS
+
+  async function loadAssessments() {
+    try {
+      const res = await fetch(`${API}/courses`);
+      const courses = await res.json();
+
+      const all = [];
+      for (const c of courses) {
+        const r = await fetch(`${API}/templates/${c.id}`);
+        const tmpl = await r.json();
+        const assessments = tmpl.filter(t =>
+          !['Midterm','Final','Quiz','Quizzes'].includes(t.category)
+        );
+        assessments.forEach(t => {
+          t._courseCode = c.course_code;
+          t._courseId = c.id;
+        });
+        all.push(...assessments);
+      }
+      renderAssessments(all);
+    } catch {
+      document.getElementById('assessments-tbody').innerHTML =
+        `<tr><td colspan="8" style="text-align:center;color:#ff8fa3;padding:20px;">❌ Cannot load assessments.</td></tr>`;
+    }
+  }
+
+  function renderAssessments(list) {
+    const tbody = document.getElementById('assessments-tbody');
+    if (!list.length) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:rgba(255,255,255,0.3);padding:20px;font-style:italic;">No assessments yet.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = list.map(t => `
+      <tr>
+        <th><input type="text" value="${esc(t._courseCode)}" class="plain-text"/></th>
+        <td><input type="text" value="${esc(t.assessment_name)}" class="plain-text"/></td>
+        <td>
+          <select name="categories" size="1">
+            <option>— Select —</option>
+            <option ${t.category==='Assignment' ? 'selected' : ''}>Assignments</option>
+            <option ${t.category==='Lab' ? 'selected' : ''}>Labs</option>
+            <option ${t.category==='Project' ? 'selected' : ''}>Projects</option>
+            <option ${t.category==='Quiz' ? 'selected' : ''}>Quizzes</option>
+          </select>
+        </td>
+        <td>
+          <input type="datetime-local" class="plain-text" value="${toDateTimeLocalValue(t.released_date)}" onchange="updateTemplateField(${t.id},'released_date',this.value)">
+        </td>
+        <td>
+          <input type="datetime-local" class="plain-text" value="${toDateTimeLocalValue(t.due_date)}" onchange="updateTemplateField(${t.id},'due_date',this.value)">
+        </td>
+        <td><input type="text" value="${t.weight}%" class="plain-text"/></td>
+        <td><textarea class="plain-text desc-field" rows="1">${t.description || ''}</textarea></td>
+        <td>
+          <button class="DeleteButton" onclick="deleteTemplate(${t.id},'${esc(t.assessment_name)}','assessment')">
+            <img src="https://cdn-icons-png.flaticon.com/512/1214/1214428.png" alt="delete"/>
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function validateAssessmentForm() {
+    const course = document.getElementById('ass-course').value.trim();
+    const name = document.getElementById('ass-name').value.trim();
+    const category = document.getElementById('ass-category').value;
+    const weight = document.getElementById('ass-weight').value.trim();
+
+    setError('ass-course', 'err-ass-course', !course);
+    setError('ass-name', 'err-ass-name', !name);
+    setError('ass-category', 'err-ass-category', !category);
+    setError('ass-weight', 'err-ass-weight', weight === '' || isNaN(weight) || +weight < 0 || +weight > 100);
+
+    return course && name && category && weight !== '' && !isNaN(weight) && +weight >= 0 && +weight <= 100;
+  }
+
+  async function submitAddAssessment() {
+    if (!validateAssessmentForm()) return;
+
+    const courseCode = document.getElementById('ass-course').value.trim();
+    let courseId;
+
+    try {
+      const res = await fetch(`${API}/courses`);
+      const courses = await res.json();
+      const found = courses.find(c => c.course_code.toLowerCase() === courseCode.toLowerCase());
+
+      if (!found) {
+        setError('ass-course', 'err-ass-course', true);
+        document.getElementById('err-ass-course').textContent = `Course "${courseCode}" not found in database`;
+        return;
+      }
+      courseId = found.id;
+    } catch {
+      showToast('Cannot reach server', 'error');
+      return;
+    }
+
+    setLoading('btn-add-assessment', true);
+    try {
+      const res = await fetch(`${API}/templates`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          course_id: courseId,
+          assessment_name: document.getElementById('ass-name').value.trim(),
+          category: document.getElementById('ass-category').value,
+          description: document.getElementById('ass-desc').value.trim(),
+          released_date: document.getElementById('ass-released').value || null,
+          due_date: document.getElementById('ass-deadline').value || null,
+          weight: +document.getElementById('ass-weight').value
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      showToast('Assessment added!');
+      window.location.hash = '';
+      ['ass-course','ass-name','ass-desc','ass-deadline','ass-released','ass-weight'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('ass-category').value = '';
+      loadAssessments();
+    } catch (err) {
+      showToast('Failed: ' + err.message, 'error');
+    } finally {
+      setLoading('btn-add-assessment', false);
+    }
+  }
+
+  // EXAMINATIONS
+
+  async function loadExaminations() {
+    try {
+      const res = await fetch(`${API}/courses`);
+      const courses = await res.json();
+
+      const all = [];
+      for (const c of courses) {
+        const r = await fetch(`${API}/templates/${c.id}`);
+        const tmpl = await r.json();
+        const exams = tmpl.filter(t =>
+          ['Midterm','Final','Quiz','Quizzes','Exam'].includes(t.category)
+        );
+        exams.forEach(t => {
+          t._courseCode = c.course_code;
+          t._courseId = c.id;
+        });
+        all.push(...exams);
+      }
+      renderExaminations(all);
+    } catch {
+      document.getElementById('examinations-tbody').innerHTML =
+        `<tr><td colspan="7" style="text-align:center;color:#ff8fa3;padding:20px;">❌ Cannot load examinations.</td></tr>`;
+    }
+  }
+
+  function renderExaminations(list) {
+    const tbody = document.getElementById('examinations-tbody');
+    if (!list.length) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,0.3);padding:20px;font-style:italic;">No examinations yet.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = list.map(t => `
+      <tr>
+        <th><input type="text" value="${esc(t._courseCode)}" class="plain-text"/></th>
+        <td><input type="text" value="${esc(t.assessment_name)}" class="plain-text"/></td>
+        <td>
+          <select name="categories" size="1">
+            <option>— Select —</option>
+            <option ${t.category==='Quiz' || t.category==='Quizzes' ? 'selected' : ''}>Quizzes</option>
+            <option ${t.category==='Lab' ? 'selected' : ''}>Labs</option>
+            <option ${t.category==='Midterm' ? 'selected' : ''}>Midterm</option>
+            <option ${t.category==='Final' ? 'selected' : ''}>Final</option>
+          </select>
+        </td>
+        <td>
+          <input type="datetime-local" class="plain-text" value="${toDateTimeLocalValue(t.due_date)}" onchange="updateTemplateField(${t.id},'due_date',this.value)">
+        </td>
+        <td><input type="text" value="${t.weight}%" class="plain-text"/></td>
+        <td><textarea class="plain-text desc-field" rows="1">${t.description || ''}</textarea></td>
+        <td>
+          <button class="DeleteButton" onclick="deleteTemplate(${t.id},'${esc(t.assessment_name)}','examination')">
+            <img src="https://cdn-icons-png.flaticon.com/512/1214/1214428.png" alt="delete"/>
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function validateExamForm() {
+    const course = document.getElementById('exam-course').value.trim();
+    const name = document.getElementById('exam-name').value.trim();
+    const category = document.getElementById('exam-category').value;
+    const weight = document.getElementById('exam-weight').value.trim();
+
+    setError('exam-course', 'err-exam-course', !course);
+    setError('exam-name', 'err-exam-name', !name);
+    setError('exam-category', 'err-exam-category', !category);
+    setError('exam-weight', 'err-exam-weight', weight === '' || isNaN(weight) || +weight < 0 || +weight > 100);
+
+    return course && name && category && weight !== '' && !isNaN(weight) && +weight >= 0 && +weight <= 100;
+  }
+
+  async function submitAddExamination() {
+    if (!validateExamForm()) return;
+
+    const courseCode = document.getElementById('exam-course').value.trim();
+    let courseId;
+
+    try {
+      const res = await fetch(`${API}/courses`);
+      const courses = await res.json();
+      const found = courses.find(c => c.course_code.toLowerCase() === courseCode.toLowerCase());
+
+      if (!found) {
+        setError('exam-course', 'err-exam-course', true);
+        document.getElementById('err-exam-course').textContent = `Course "${courseCode}" not found`;
+        return;
+      }
+      courseId = found.id;
+    } catch {
+      showToast('Cannot reach server', 'error');
+      return;
+    }
+
+    setLoading('btn-add-exam', true);
+    try {
+      const res = await fetch(`${API}/templates`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          course_id: courseId,
+          assessment_name: document.getElementById('exam-name').value.trim(),
+          category: document.getElementById('exam-category').value,
+          description: document.getElementById('exam-desc').value.trim(),
+          due_date: document.getElementById('exam-date').value || null,
+          weight: +document.getElementById('exam-weight').value
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      showToast('Examination added!');
+      window.location.hash = '';
+      ['exam-course','exam-name','exam-desc','exam-date','exam-weight'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('exam-category').value = '';
+      loadExaminations();
+    } catch (err) {
+      showToast('Failed: ' + err.message, 'error');
+    } finally {
+      setLoading('btn-add-exam', false);
+    }
+  }
+
+  async function deleteTemplate(id, name, type) {
+    if (!confirm(`Delete ${type} "${name}"? This cannot be undone.`)) return;
+    try {
+      const res = await fetch(`${API}/templates/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      showToast(`"${name}" deleted.`);
+      loadAssessments();
+      loadExaminations();
+    } catch (err) {
+      showToast('Failed: ' + err.message, 'error');
+    }
+  }
+
+  async function updateTemplateField(id, field, value) {
+    try {
+      const res = await fetch(`${API}/templates/${id}/field`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ field, value: value || null })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      showToast('Saved!');
+    } catch (err) {
+      showToast('Failed to save: ' + err.message, 'error');
+    }
+  }
+
+  loadCourses();
+  loadAssessments();
+  loadExaminations();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Settings</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="/settings_style.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="TopNav">
+  <h2>Smart Course Companion</h2>
+  <ul>
+    <a href="/admin/dashboard"><li id="dashboard">DashBoard</li></a>
+    <a href="/admin/courses"><li id="courses">Courses</li></a>
+    <a href="/admin/analytics"><li id="analytics">Analytics</li></a>
+    <a href="/admin/templates"><li id="templates">Templates</li></a>
+    <a href="/admin/settings-page"><li id="Settings" style="background-color: rgb(130, 100, 136); border-radius: 15px;">Settings</li></a>
+  </ul>
+  <div class="TopNavIcons">
+    <div class="Logout">
+      <a href="/auth/logout">
+        <img src="https://www.clipartmax.com/png/middle/36-367350_png-file-logout-icon.png" alt="Logout icon" />
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-header">
+    <h1><span class="icon">&#9881;&#65039;</span> Settings</h1>
+    <p>Manage your account, profile, and platform preferences.</p>
+  </div>
+
+  <div id="feedback-banner" style="
+    display: none;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 500;
+  "></div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon blue">&#128100;</div>
+      <div class="card-header-text">
+        <h3>Account Profile</h3>
+        <p>Your personal and academic information</p>
+      </div>
+    </div>
+
+    <div class="avatar-row">
+      <div class="avatar" id="avatar-initials">--
+        <div class="avatar-edit">&#9998;&#65039;</div>
+      </div>
+      <div class="avatar-info">
+        <h4 id="avatar-name">Loading...</h4>
+        <p id="avatar-email">Loading...</p>
+        <span class="badge" id="avatar-badge">Admin / Instructor</span>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="field-name" placeholder="Your full name">
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="field-email" placeholder="Your email">
+      </div>
+      <div class="form-group">
+        <label>Department</label>
+        <input type="text" id="field-department" placeholder="e.g. Gina Cody School">
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-primary" id="btn-save-profile" type="button">Save Profile</button>
+      <button class="btn btn-ghost" id="btn-change-password" type="button">Change Password</button>
+    </div>
+  </div>
+
+  <div class="card" id="change-password-panel" style="display:none;">
+    <div class="card-header">
+      <div class="card-icon orange">&#128274;</div>
+      <div class="card-header-text">
+        <h3>Change Password</h3>
+        <p>Enter your current password to set a new one</p>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Current Password</label>
+        <input type="password" id="cp-current" placeholder="Your current password">
+      </div>
+      <div class="form-group">
+        <label>New Password</label>
+        <input type="password" id="cp-new" placeholder="Minimum 8 characters">
+      </div>
+      <div class="form-group">
+        <label>Confirm New Password</label>
+        <input type="password" id="cp-confirm" placeholder="Repeat new password">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" id="btn-submit-password" type="button">Update Password</button>
+      <button class="btn btn-ghost" id="btn-cancel-password" type="button">Cancel</button>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon teal">&#128218;</div>
+        <div class="card-header-text">
+          <h3>Courses Taught</h3>
+          <p>Your active course assignments</p>
+      </div>
+    </div>
+
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-val" id="teaching-active-count">0</div>
+          <div class="stat-label">Active</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="teaching-student-count">0</div>
+          <div class="stat-label">Students</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="teaching-assessment-count">0</div>
+          <div class="stat-label">Assessments</div>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:16px">
+        <label>Primary Course</label>
+        <select id="primary-course-select">
+          <option selected>Loading courses...</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin-bottom:24px">
+        <label>Academic Role</label>
+        <select id="academic-role-select">
+          <option selected>Instructor + Admin</option>
+          <option>Instructor</option>
+          <option>Teaching Assistant</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" id="btn-refresh-teaching" type="button">Update</button>
+        <a href="/admin/courses">
+          <button class="btn btn-ghost" type="button">Manage All Courses &rarr;</button>
+        </a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon orange">&#128737;&#65039;</div>
+        <div class="card-header-text">
+          <h3>Platform Controls</h3>
+          <p>Platform-wide settings</p>
+        </div>
+      </div>
+
+      <div class="toggle-list">
+        <!--<div class="toggle-row">
+          <div class="toggle-info">
+            <h4>Student Self-Registration</h4>
+            <p>Allow students to create their own accounts</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>-->
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <h4>Course Enrollment Open</h4>
+            <p>Students can add/drop courses freely</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <!--<div class="toggle-row">
+          <div class="toggle-info">
+            <h4>Grades Visible to Students</h4>
+            <p>Students can see their marks in real time</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>-->
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <h4>Anonymized Usage Statistics</h4>
+            <p>Collect completion &amp; engagement data</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <h4>Email Deadline Reminders</h4>
+            <p>Auto-send reminders before due dates</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="apply-row">
+        <button class="btn btn-teal" id="btn-apply-controls" type="button">Apply Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="danger-card">
+    <div class="danger-header">
+      <div class="danger-icon">&#9888;&#65039;</div>
+      <h3>Danger Zone</h3>
+    </div>
+    <p class="danger-desc">The actions below are <strong>permanent and cannot be undone.</strong> Please proceed with caution.</p>
+
+    <div class="danger-actions">
+      <div class="danger-action">
+        <div class="danger-action-info">
+          <h4>Reset All Student Data</h4>
+          <p>Clears all grades, submissions, and progress &mdash; <span class="irreversible">this action is irreversible</span></p>
+        </div>
+        <button class="btn-danger js-placeholder-action" type="button">Reset Data</button>
+      </div>
+      <div class="danger-action">
+        <div class="danger-action-info">
+          <h4>Disable All Courses</h4>
+          <p>Removes student access to all active courses &mdash; <span class="irreversible">this action is irreversible</span></p>
+        </div>
+        <button class="btn-danger js-placeholder-action" type="button">Disable Courses</button>
+      </div>
+      <div class="danger-action">
+        <div class="danger-action-info">
+          <h4>Delete Admin Account</h4>
+          <p>Permanently removes your account and all data &mdash; <span class="irreversible">this action is irreversible</span></p>
+        </div>
+        <button class="btn-danger js-placeholder-action" type="button">Delete Account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showBanner(message, type = 'success') {
+  const el = document.getElementById('feedback-banner');
+  el.textContent = message;
+  el.style.display = 'block';
+
+  if (type === 'success') {
+    el.style.background = 'rgba(40,167,69,0.15)';
+    el.style.border = '1px solid rgba(40,167,69,0.4)';
+    el.style.color = '#5cb85c';
+  } else {
+    el.style.background = 'rgba(220,53,69,0.15)';
+    el.style.border = '1px solid rgba(220,53,69,0.4)';
+    el.style.color = '#ff6b7a';
+  }
+
+  setTimeout(() => {
+    el.style.display = 'none';
+  }, 4000);
+}
+
+function getInitials(name) {
+  if (!name) return '--';
+  return name.trim().split(' ').map((word) => word[0]).join('').toUpperCase().slice(0, 2);
+}
+
+async function populateTeachingSnapshot(courses) {
+  const activeCourses = courses.filter((course) => Boolean(course.is_enabled));
+  const totalStudents = courses.reduce((sum, course) => sum + Number(course.enrollment_count || 0), 0);
+  const templateLists = await Promise.all(
+    courses.map((course) =>
+      fetch(`/api/templates/${course.id}`)
+        .then((res) => (res.ok ? res.json() : []))
+        .catch(() => [])
+    )
+  );
+  const totalAssessments = templateLists.reduce((sum, templates) => sum + templates.length, 0);
+
+  document.getElementById('teaching-active-count').textContent = activeCourses.length;
+  document.getElementById('teaching-student-count').textContent = totalStudents;
+  document.getElementById('teaching-assessment-count').textContent = totalAssessments;
+
+  const primaryCourseSelect = document.getElementById('primary-course-select');
+  if (!courses.length) {
+    primaryCourseSelect.innerHTML = '<option selected>No assigned courses yet</option>';
+    return;
+  }
+
+  primaryCourseSelect.innerHTML = courses.map((course, index) => `
+    <option value="${course.id}" ${index === 0 ? 'selected' : ''}>
+      ${course.course_code} - ${course.course_name}
+    </option>
+  `).join('');
+}
+
+async function init() {
+  try {
+    const [settingsRes, coursesRes] = await Promise.all([
+      fetch('/admin/settings'),
+      fetch('/api/courses')
+    ]);
+    const [settingsData, coursesData] = await Promise.all([
+      settingsRes.json(),
+      coursesRes.json()
+    ]);
+
+    if (!settingsRes.ok) {
+      showBanner(settingsData.error || 'Could not load your profile.', 'error');
+      return;
+    }
+
+    if (!coursesRes.ok) {
+      showBanner(coursesData.error || 'Could not load your courses.', 'error');
+      return;
+    }
+
+    const admin = settingsData.admin;
+    const courses = Array.isArray(coursesData) ? coursesData : [];
+  const roleLabel = admin.role || 'Instructor + Admin';
+  const badgeRole = admin.role || 'Admin / Instructor';
+  const badgeLabel = admin.department ? `${badgeRole} | ${admin.department}` : badgeRole;
+
+    document.getElementById('field-name').value = admin.name || '';
+    document.getElementById('field-email').value = admin.email || '';
+    document.getElementById('field-department').value = admin.department || '';
+
+    document.getElementById('avatar-initials').childNodes[0].textContent = getInitials(admin.name);
+    document.getElementById('avatar-name').textContent = admin.name || '';
+    document.getElementById('avatar-email').textContent = admin.email || '';
+    document.getElementById('avatar-badge').textContent = badgeLabel;
+
+    const roleSelect = document.getElementById('academic-role-select');
+    const matchingOption = Array.from(roleSelect.options).find((option) => option.value === roleLabel);
+    if (matchingOption) {
+      roleSelect.value = roleLabel;
+    }
+
+    await populateTeachingSnapshot(courses);
+  } catch (err) {
+    showBanner('Could not connect to the server.', 'error');
+  }
+}
+
+document.getElementById('btn-save-profile').addEventListener('click', async () => {
+  const body = {
+    name: document.getElementById('field-name').value.trim(),
+    email: document.getElementById('field-email').value.trim(),
+    department: document.getElementById('field-department').value.trim()
+  };
+
+  if (!body.name || !body.email) {
+    showBanner('Name and email are required.', 'error');
+    return;
+  }
+
+  try {
+    const res = await fetch('/admin/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+
+    if (res.ok) {
+      showBanner(data.success || 'Your changes were saved.');
+      document.getElementById('avatar-initials').childNodes[0].textContent = getInitials(body.name);
+      document.getElementById('avatar-name').textContent = body.name;
+      document.getElementById('avatar-email').textContent = body.email;
+      const roleLabel = document.getElementById('academic-role-select').value || 'Admin / Instructor';
+      document.getElementById('avatar-badge').textContent = body.department ? `${roleLabel} | ${body.department}` : roleLabel;
+    } else {
+      showBanner(data.error || 'Could not save profile.', 'error');
+    }
+  } catch (err) {
+    showBanner('Server error. Please try again.', 'error');
+  }
+});
+
+document.getElementById('btn-change-password').addEventListener('click', () => {
+  const panel = document.getElementById('change-password-panel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+
+  if (panel.style.display === 'block') {
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+});
+
+document.getElementById('btn-cancel-password').addEventListener('click', () => {
+  document.getElementById('change-password-panel').style.display = 'none';
+  document.getElementById('cp-current').value = '';
+  document.getElementById('cp-new').value = '';
+  document.getElementById('cp-confirm').value = '';
+});
+
+document.getElementById('btn-submit-password').addEventListener('click', async () => {
+  const body = {
+    currentPassword: document.getElementById('cp-current').value,
+    newPassword: document.getElementById('cp-new').value,
+    confirmNewPassword: document.getElementById('cp-confirm').value
+  };
+
+  if (!body.currentPassword || !body.newPassword || !body.confirmNewPassword) {
+    showBanner('Please fill in all password fields.', 'error');
+    return;
+  }
+
+  if (body.newPassword !== body.confirmNewPassword) {
+    showBanner('New passwords do not match.', 'error');
+    return;
+  }
+
+  try {
+    const res = await fetch('/admin/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+
+    if (res.ok) {
+      showBanner(data.success || 'Password changed successfully.');
+      document.getElementById('change-password-panel').style.display = 'none';
+      document.getElementById('cp-current').value = '';
+      document.getElementById('cp-new').value = '';
+      document.getElementById('cp-confirm').value = '';
+    } else {
+      showBanner(data.error || 'Failed to change password.', 'error');
+    }
+  } catch (err) {
+    showBanner('Server error. Please try again.', 'error');
+  }
+});
+
+document.getElementById('btn-refresh-teaching').addEventListener('click', () => {
+  init();
+});
+
+document.getElementById('btn-apply-controls').addEventListener('click', () => {
+  return;
+});
+
+document.querySelectorAll('.js-placeholder-action').forEach((button) => {
+  button.addEventListener('click', () => {
+    return;
+  });
+});
+
+init();
+</script>
+
+</body>
+</html>

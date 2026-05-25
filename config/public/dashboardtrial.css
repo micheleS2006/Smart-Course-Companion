@@ -1,0 +1,634 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #c4b0e8, #a8c4f5);
+    color: #2d1b6e;
+}
+
+
+
+/* ── NAVBAR ── */
+.navbar {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.45);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 0 30px;
+    height: 52px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(106, 79, 207, 0.15);
+    box-sizing: border-box;
+}
+
+.navbar h2 {
+    color: #2d1b6e;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 28px 0 0;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    gap: 4px;
+    flex: 1;
+}
+
+.navbar ul li {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 13px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+    color: #2d1b6e;
+    height: 32px;
+}
+
+.navbar ul li:hover {
+    background: rgba(106, 79, 207, 0.15);
+}
+
+.navbar ul li a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.navbar ul li.active {
+    background: rgba(106, 79, 207, 0.2);
+}
+
+.nav-icons {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-icons .lightmode img,
+.nav-icons .myaccount img,
+.nav-icons .logout img {
+    background: rgba(106, 79, 207, 0.1);
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.nav-icons .lightmode img:hover,
+.nav-icons .myaccount img:hover,
+.nav-icons .logout img:hover {
+    background: rgba(106, 79, 207, 0.25);
+}
+
+.logo {
+    position: absolute;
+    left: 25px;
+    color: #2d1b6e;
+    font-weight: bold;
+    font-size: 18px; 
+}
+
+.nav-links {
+    display: flex;
+    gap: 12px; 
+    
+}
+
+.nav-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 0 18px;
+    text-decoration: none;
+    color: #5b3cc4;
+    background: rgba(255, 255, 255, 0.32);
+    border: 1.5px solid rgba(106, 79, 207, 0.38);
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.nav-box:hover {
+    background: rgba(255, 255, 255, 0.56);
+    border-color: rgba(106, 79, 207, 0.6);
+    color: #43219d;
+    box-shadow: 0 8px 18px -14px rgba(45, 27, 110, 0.55);
+}
+
+
+
+.layout {
+    display: flex;
+    min-height: calc(100vh - 57px);
+}
+
+
+
+
+
+.sidebar {
+    width: 240px;
+    background: rgba(255, 255, 255, 0.3);
+    border-right: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 28px 20px; 
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.link {
+    display: block;
+    text-decoration: none;
+    color: #2d1b6e;
+    padding: 10px 14px;
+    border-radius: 8px;
+    transition: 0.3s;
+
+    background: rgba(106, 79, 207, 0.2);
+    border-color: rgba(106, 79, 207, 0.35);
+    font-weight: bold;
+}
+
+.active-course {
+    background: rgba(106, 79, 207, 0.2);
+    color: #2d1b6e;
+    border-color: rgba(106, 79, 207, 0.35);
+    font-weight: bold;
+}
+
+.link:hover {
+    background: rgba(106, 79, 207, 0.12);
+}
+
+
+
+.content {
+    flex: 1;
+    padding: 32px;
+}
+
+.content h1 {
+    font-size: 30px;
+    margin-bottom: 24px; 
+    position:absolute;
+}
+
+
+
+.accordions {
+    display: flex;
+    flex-direction: column;
+    gap: 24px; 
+    margin-top: 70px;
+}
+
+
+
+.accordion {
+    background: linear-gradient(200deg, #6a4fcf 0%, #60c0e0 100%);
+    border-radius: 16px;
+    padding: 20px 24px;
+    box-shadow: 0 20px 25px -10px rgba(0, 0, 0, 0.25);
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.accordion:hover {
+    transform: translateY(-3px);
+}
+
+
+
+.accordion-header h2 {
+    font-size: 18px;
+}
+
+
+
+.accordion-content {
+    margin-top: 15px;
+}
+
+.accordion-content ul {
+    list-style: none;
+}
+
+.accordion-content li {
+    padding: 6px 0;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+
+
+.accordion:nth-child(2) {
+    background: linear-gradient(200deg, #5c2fa6 0%, #5a36c0 100%);
+}
+
+
+.calendar-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px; 
+
+    margin-top: 100px;
+}
+
+.view-toggle {
+    display: flex;
+    gap: 12px;
+}
+
+
+.nav-box.active {
+    background: rgba(106, 79, 207, 0.14);
+    border-color: rgba(106, 79, 207, 0.7);
+    color: #2d1b6e;
+    box-shadow: 0 10px 20px -16px rgba(45, 27, 110, 0.6);
+} 
+/*---------------------------------------------------------------------------------------------------------------
+/* ── DROPDOWNS ── */
+
+.month-controls select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(106,79,207,0.4);
+    background: white;
+    color: #2d1b6e;
+    margin-left: 10px;
+}
+
+
+/* Month Calendar Grid */
+.calendar.month {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 days per week */
+    gap: 10px;
+}
+
+.calendar.month .day-card {
+    min-height: 100px;       /* all day boxes same height */
+    max-height: 140px;       /* adjust if needed */
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(150,120,220,0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow-y: auto;
+    position: relative;      /* for top-left weekday label */
+}
+
+/* ── CALENDAR GRID ── */
+
+.calendar-container {
+    display: grid;
+    gap: 15px;
+}
+
+/* Month View */
+
+.month-view {
+    grid-template-columns: repeat(7, 1fr);
+}
+
+/* Week View */
+
+.week-view {
+    grid-template-columns: repeat(7, 1fr);
+}
+
+/* ── DAY CARD ── */
+
+
+
+/* Date Label */
+
+.date-label {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* Assignment Block (future use) */
+
+
+/*----------------------------------------------*/
+
+/* ─── DAY CARDS ─── */
+.day-card {
+    display: flex;
+    flex-direction: column;      /* stack assignments vertically first */
+    flex-wrap: wrap;             /* wrap into multiple columns if max-height reached */
+    max-height: 300px;           /* adjust height as needed */
+    gap: 6px;
+    padding: 10px;
+    border: 1px solid rgba(150,120,220,0.3);
+    border-radius: 16px;
+    background: rgba(255,255,255,0.55);
+    overflow-x: auto;            /* scroll horizontally if assignments overflow */
+}
+
+/* ─── TODAY HIGHLIGHT ─── */
+.today {
+    border: 2px solid #6a4fcf;
+}
+
+/* ─── ASSIGNMENT BLOCK ─── */
+.assignment {
+    background: linear-gradient(135deg, #c4b0e8, #a8c4f5); /* same fade as My Courses */
+    color: #2d1b6e;
+    border-radius: 8px;
+    padding: 6px 8px;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-shrink: 0;               /* prevent shrinking in flex-wrap */
+    margin-bottom: 4px;
+    min-width: 140px;              /* ensure neat wrapping into columns */
+    gap: 8px;
+}
+
+.assignment-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+    gap: 2px;
+}
+
+.assignment-title {
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.assignment-course,
+.assignment-weight {
+    font-size: 11px;
+    line-height: 1.2;
+}
+
+/* Done button inside assignment */
+.assignment .done-btn {
+    background: white;
+    color: #6a4fcf;
+    border: none;
+    border-radius: 6px;
+    padding: 3px 6px;
+    cursor: pointer;
+    font-size: 11px;
+    flex-shrink: 0;
+}
+
+/* Optional: mark done assignments visually */
+.assignment.done {
+    opacity: 0.6;
+    text-decoration: line-through;
+}
+
+
+
+.week-view {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    align-items: stretch;
+}
+
+.day-card {
+    min-height: 180px;
+}
+
+.week-view .day-card {
+    min-height: 220px;
+    padding-top: 34px;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.calendar.month .day-card {
+    padding-top: 26px;
+}
+
+.deadline-list {
+    list-style: none;
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+}
+
+.deadline-item {
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: grid;
+    gap: 10px;
+    backdrop-filter: blur(8px);
+}
+
+.deadline-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.deadline-course {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.deadline-date {
+    font-size: 12px;
+    font-weight: 700;
+    color: #2d1b6e;
+    background: rgba(255, 255, 255, 0.78);
+    border-radius: 999px;
+    padding: 4px 10px;
+    white-space: nowrap;
+}
+
+.deadline-title {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: #ffffff;
+}
+
+.deadline-bottom-row {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.deadline-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(45, 27, 110, 0.22);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.deadline-empty {
+    padding: 18px 16px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px dashed rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 14px;
+    text-align: center;
+}
+
+.calendar-container.week-table,
+.calendar.month-table {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(45, 27, 110, 0.16);
+    background: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 18px 28px -18px rgba(45, 27, 110, 0.35);
+    backdrop-filter: blur(10px);
+}
+
+.calendar-column-header {
+    padding: 14px 16px;
+    background: rgba(45, 27, 110, 0.82);
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.week-table > :nth-child(7n),
+.month-table > :nth-child(7n) {
+    border-right: none;
+}
+
+.week-table .day-card,
+.month-table .day-card {
+    min-height: 240px;
+    padding: 14px 12px 12px;
+    border-top: 1px solid rgba(45, 27, 110, 0.14);
+    border-right: 1px solid rgba(45, 27, 110, 0.14);
+    border-radius: 0;
+    background: rgba(255, 255, 255, 0.34);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    flex-wrap: nowrap;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.month-table .day-card {
+    min-height: 150px;
+}
+
+.empty-day {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.calendar-date-label {
+    align-self: flex-start;
+    font-size: 14px;
+    font-weight: 700;
+    color: #2d1b6e;
+}
+
+.today .calendar-date-label {
+    background: rgba(106, 79, 207, 0.18);
+    padding: 4px 10px;
+    border-radius: 999px;
+}
+
+.week-table .assignment,
+.month-table .assignment {
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 0;
+    border-radius: 10px;
+}
+
+.month-table .assignment {
+    padding: 6px 8px;
+}
+
+.month-table .assignment-title {
+    font-size: 11px;
+}
+
+.month-table .assignment-course,
+.month-table .assignment-weight {
+    font-size: 10px;
+}
+
+.deadline-item {
+    padding: 18px 20px;
+}
+
+.deadline-empty {
+    padding: 20px 18px;
+}
+
+.deadline-item {
+    padding: 20px 22px;
+    gap: 10px;
+}
+
+.deadline-top-row {
+    gap: 14px;
+}
+
+.deadline-bottom-row {
+    margin-top: 4px;
+}
+
+.deadline-pill {
+    padding: 6px 12px;
+}
+
+.deadline-top-row,
+.deadline-title,
+.deadline-bottom-row {
+    padding-left: 8px;
+    padding-right: 8px;
+}

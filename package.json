@@ -1,0 +1,25 @@
+{
+    "name": "backend",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "db:bootstrap": "node scripts/bootstrap-db.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "dependencies": {
+        "bcrypt": "^6.0.0",
+        "connect-flash": "^0.1.1",
+        "cors": "^2.8.6",
+        "dotenv": "^17.4.0",
+        "express": "^5.2.1",
+        "express-session": "^1.19.0",
+        "json2csv": "^6.0.0-alpha.2",
+        "mysql2": "^3.20.0",
+        "pdfkit": "^0.18.0"
+    }
+}

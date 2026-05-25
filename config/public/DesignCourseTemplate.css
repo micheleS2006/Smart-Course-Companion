@@ -1,0 +1,801 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif; /* remove default browser styles */
+}
+
+html, body {
+    min-height: 100vh; /* covers full screen even with little content */
+    background: linear-gradient(135deg, #0f0c1a, #1a1040, #111827); /* dark diagonal gradient */
+    color: white;
+}
+
+
+
+.TopNav {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(14px); /* Creates a frosted glass effect, it blurs everything the element */
+    -webkit-backdrop-filter: blur(14px);
+    padding: 0 30px;
+    height: 52px;
+    position: sticky; /* As the user scroll the navigation bar will remain in place */
+    top: 0;
+    z-index: 100; /* Nav bar will be on top of everything */
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+}
+
+.TopNav h2 {
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 28px 0 0;
+    white-space: nowrap; /* Tells the browser, to not wrap text onto a new line, no matter how long it gets */
+    flex-shrink: 0; /* Element will not shrink, hold size */
+}
+
+.TopNav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    gap: 4px;
+    flex: 1; /* Element fill all available space */
+}
+
+.TopNav li {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 13px;
+    font-variant: small-caps;
+    padding: 6px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.2s; 
+    white-space: nowrap;
+    color: rgba(255, 255, 255, 0.6);
+    height: 32px;
+}
+
+.TopNav li:hover {
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.TopNav a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Icons pinned to the far right */
+.TopNavIcons {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}
+
+
+/* MAIN CONTAINER */
+.MainContainer {
+    padding: 0 60px 60px 60px;
+    box-sizing: border-box;
+}
+
+.PageCenter {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding-top: 16px;
+}
+
+
+/* SHARED GLASS CARD */
+.NavBar,
+.Overview,
+.Preview {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    box-sizing: border-box;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+
+/* WELCOME CARD */
+.NavBar {
+    padding: 30px 40px;
+}
+
+.Welcome h4 {
+    font-size: 24px;
+    margin: 0;
+    color: white;
+}
+
+.Welcome p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 4px 0 0 0;
+}
+
+.Welcome h4 img {
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+}
+
+.QuickStats {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 15px;
+    flex-wrap: wrap; /* If the items do fit push them to the next line, responsive */
+}
+
+.StatCard {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+    white-space: nowrap;
+    transition: background 0.2s;
+}
+
+.StatCard:hover {
+    background: rgba(74, 108, 247, 0.2);
+}
+
+.StatCard img {
+    width: 25px;
+    height: 25px;
+}
+
+.lightmode {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.lightmode img {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    transition: background 0.2s, border-radius 0.2s;
+}
+
+.Logout img {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 5px;
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    transition: background 0.2s, border-radius 0.2s;
+}
+
+.lightmode img:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 12px;
+}
+
+
+/* MAIN LAYOUT */
+.TemplateContainer {
+    padding: 20px 60px 60px 60px;
+    box-sizing: border-box;
+}
+
+.TemplateGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+}
+
+
+/* GLASS CARDS */
+.TemplateCard,
+.BuilderCard {
+    background: rgba(255, 255, 255, 0.06); /* see-through white tint */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 24px;
+    box-sizing: border-box;
+    backdrop-filter: blur(10px); /* blurs background behind the card */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+.TemplateCard h3,
+.BuilderCard h3 {
+    font-size: 18px;
+    color: white;
+    margin-bottom: 18px;
+}
+
+.TemplateCard h3 {
+    display: inline;
+    margin-right: 14px; /* keeps title and add button on same line */
+}
+
+
+/* TABLE */
+.overflow-scroll {
+    overflow-x: auto; /* scroll sideways on small screens */
+}
+
+.TemplatesTable {
+    width: 100%;
+    border-collapse: separate; /* needed so border-spacing works */
+    border-spacing: 0 8px;
+    min-width: 500px;
+    margin-top: 8px;
+}
+
+.TemplatesTable .Elements th {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 8px 14px;
+    text-align: center;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.TemplatesTable tr:not(.Elements) td,
+.TemplatesTable tr:not(.Elements) th {
+    text-align: center;
+    vertical-align: middle;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.07);
+    color: rgba(255, 255, 255, 0.9);
+    transition: background 0.2s;
+}
+
+/* round first and last cell to fake rounded row corners */
+.TemplatesTable tr:not(.Elements) th:first-child,
+.TemplatesTable tr:not(.Elements) td:first-child {
+    border-radius: 10px 0 0 10px;
+}
+
+.TemplatesTable tr:not(.Elements) th:last-child,
+.TemplatesTable tr:not(.Elements) td:last-child {
+    border-radius: 0 10px 10px 0;
+}
+
+/* highlight every cell in hovered row */
+.TemplatesTable tr:not(.Elements):hover td,
+.TemplatesTable tr:not(.Elements):hover th {
+    background: rgba(74, 108, 247, 0.2);
+}
+
+
+/* BADGES */
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.badge-soen {
+    background: rgba(74, 108, 247, 0.25);
+    border: 1px solid rgba(74, 108, 247, 0.4);
+    color: #a0b4ff; /* blue */
+}
+
+.badge-comp {
+    background: rgba(0, 206, 201, 0.2);
+    border: 1px solid rgba(0, 206, 201, 0.4);
+    color: #7fffff; /* teal */
+}
+
+.badge-engr {
+    background: rgba(253, 203, 110, 0.2);
+    border: 1px solid rgba(253, 203, 110, 0.4);
+    color: #fde68a; /* yellow */
+}
+
+
+/* BUTTONS */
+.ActionGroup {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.AddButton {
+    display: inline-block;
+    padding: 8px 18px;
+    background: linear-gradient(90deg, #4a6cf7, #00cec9); /* blue to teal */
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.3s;
+    vertical-align: middle;
+}
+
+.AddButton:hover {
+    opacity: 0.85;
+}
+
+.BtnApply {
+    display: inline-block;
+    padding: 6px 14px;
+    background: linear-gradient(90deg, #4a6cf7, #00cec9);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 7px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.BtnApply:hover {
+    opacity: 0.82;
+}
+
+.BtnEdit {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 7px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.BtnEdit:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.BtnDelete {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(255, 107, 107, 0.12);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    color: #ff9f9f;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 7px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.BtnDelete img {
+    width: 25px;
+    height: 25px;
+}
+
+.BtnDelete:hover {
+    background: rgba(255, 107, 107, 0.25);
+}
+
+.SaveButton {
+    display: inline-block;
+    padding: 10px 22px;
+    background: linear-gradient(90deg, #4a6cf7, #00cec9);
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+.SaveButton:hover {
+    opacity: 0.85;
+}
+
+.CancelButton {
+    display: inline-block;
+    padding: 10px 22px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.CancelButton:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.BtnRemoveRow {
+    width: 30px;
+    height: 30px;
+    background: rgba(255, 107, 107, 0.12);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: 7px;
+    color: #ff9f9f;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    text-decoration: none;
+}
+
+.BtnRemoveRow:hover {
+    background: rgba(255, 107, 107, 0.25);
+}
+
+
+/* BUILDER FORM */
+.BuilderTopRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* 3 equal columns */
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.BuilderField label {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+}
+
+.BuilderField input {
+    width: 100%;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+}
+
+/* removes the default select box, adds a custom arrow */
+.BuilderField select {
+    width: 100%;
+    padding: 10px 32px 10px 12px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: rgba(255, 255, 255, 0.08);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(255,255,255,0.5)'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    box-sizing: border-box;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.BuilderField input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.BuilderField input:focus,
+.BuilderField select:focus {
+    border-color: #4a6cf7;
+    box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2); /* blue glow when clicked */
+}
+
+.BuilderField select option {
+    background: #1a1040;
+}
+
+
+/* ASSESSMENT ROWS */
+.AssessmentRowsHeader {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 40px; /* matches row layout */
+    gap: 10px;
+    padding: 0 4px 8px 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 8px;
+}
+
+.AssessmentRowsHeader span {
+    font-size: 11px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.45);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: center;
+}
+
+.AssessmentRowsHeader span:first-child {
+    text-align: left;
+}
+
+.AssessmentRow {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 40px;
+    gap: 10px;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    transition: background 0.2s;
+}
+
+.AssessmentRow:hover {
+    background: rgba(74, 108, 247, 0.1);
+}
+
+.AssessmentRow input {
+    width: 100%;
+    padding: 8px 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 7px;
+    color: white;
+    font-size: 13px;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+/* removes the default select box, adds a custom arrow */
+.AssessmentRow select {
+    width: 100%;
+    padding: 8px 28px 8px 10px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: rgba(255, 255, 255, 0.08);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(255,255,255,0.5)'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 7px;
+    color: white;
+    font-size: 13px;
+    box-sizing: border-box;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.AssessmentRow input:focus,
+.AssessmentRow select:focus {
+    border-color: #4a6cf7;
+    box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.2);
+}
+
+.AssessmentRow input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.AssessmentRow select option {
+    background: #1a1040;
+}
+
+
+/* PONDERATION BAR */
+.PonderationBar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 16px 0 20px 0;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.PonderationBar > span {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    white-space: nowrap;
+}
+
+.PonderationTrack {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1); /* grey track */
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.PonderationFill {
+    height: 100%;
+    width: 60%;
+    background: linear-gradient(90deg, #4a6cf7, #00cec9); /* colored fill */
+    border-radius: 5px;
+    transition: width 0.3s;
+}
+
+.PonderationTotal {
+    font-size: 14px;
+    font-weight: bold;
+    color: #00cec9;
+    white-space: nowrap;
+}
+
+.BuilderFooter {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+
+
+/* POPUPS */
+.popup {
+    opacity: 0;
+    pointer-events: none; /* hidden and unclickable by default */
+    transition: opacity 0.3s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+    background: rgba(0, 0, 0, 0.65);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.popup:target {
+    opacity: 1;
+    pointer-events: all; /* opens when its id matches the clicked link */
+}
+
+.popup-inner {
+    background: rgba(26, 16, 64, 0.97);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 16px;
+    padding: 36px;
+    width: 45%;
+    max-width: 500px;
+    box-sizing: border-box;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+
+.popup-inner h3 {
+    font-size: 20px;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.popup-inner label {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 14px;
+    margin-bottom: 6px;
+}
+
+.popup-inner input {
+    width: 100%;
+    padding: 11px 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+/* removes the default select box, adds a custom arrow */
+.popup-inner select {
+    width: 100%;
+    padding: 11px 32px 11px 12px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: rgba(255, 255, 255, 0.08);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(255,255,255,0.5)'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    box-sizing: border-box;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.popup-inner input:focus,
+.popup-inner select:focus {
+    border-color: #4a6cf7;
+    box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2); /* blue glow when clicked */
+}
+
+.popup-inner select option {
+    background: #1a1040;
+}
+
+.PopupButtons {
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+
+/* TEMPLATE PREVIEW */
+.TemplatePreview {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: rgba(74, 108, 247, 0.1);
+    border: 1px solid rgba(74, 108, 247, 0.25);
+    border-radius: 10px;
+}
+
+.TemplatePreview p {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 8px;
+}
+
+.TemplatePreview ul {
+    list-style: none;
+    padding: 0;
+}
+
+.TemplatePreview ul li {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    display: flex;
+    justify-content: space-between;
+}
+
+.TemplatePreview ul li:last-child {
+    border-bottom: none;
+}
+
+.TemplatePreview ul li span {
+    color: #00cec9;
+    font-weight: bold;
+}

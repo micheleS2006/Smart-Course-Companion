@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reset Password</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .error-banner {
+            background: rgba(220, 53, 69, 0.15);
+            border: 1px solid rgba(220, 53, 69, 0.5);
+            color: #ff6b7a;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            font-size: 14px;
+            display: none;
+        }
+        .password-rules {
+            font-size: 12px;
+            color: rgba(255,255,255,0.55);
+            margin-top: -8px;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container" style="justify-content: center; align-items: center; flex-direction: column;">
+
+    <div class="login-box" style="text-align: center; max-width: 420px; width: 100%;">
+        <div style="font-size: 40px; margin-bottom: 10px;">🔑</div>
+        <h2>Set New Password</h2>
+        <p class="subtitle" style="margin-bottom: 20px;">Enter your new password below.</p>
+
+        <div class="error-banner" id="error-banner"></div>
+
+        <form action="/auth/reset-password" method="POST" id="reset-form" style="text-align: left;">
+
+            <input type="hidden" name="token" id="token-field">
+
+            <input
+                type="password"
+                name="password"
+                placeholder="New Password"
+                required
+                style="margin-bottom: 6px;"
+            >
+            <p class="password-rules">Minimum 8 characters</p>
+
+            <input
+                type="password"
+                name="confirmPassword"
+                placeholder="Confirm New Password"
+                required
+            >
+
+            <button type="submit" style="margin-top: 16px; width: 100%;">Reset Password</button>
+        </form>
+
+        <p class="admin-link" style="margin-top: 15px;">
+            Remembered it? <a href="/auth/login-student">Back to Login</a>
+        </p>
+    </div>
+
+</div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const token  = params.get('token');
+    const error  = params.get('error');
+
+    if (!token) {
+        alert('Invalid or missing reset link. Please request a new one.');
+        window.location.href = '/auth/forgot-password';
+    } else {
+        document.getElementById('token-field').value = token;
+    }
+
+    if (error) {
+        const el = document.getElementById('error-banner');
+        el.textContent = error;
+        el.style.display = 'block';
+    }
+
+    document.getElementById('reset-form').addEventListener('submit', function(e) {
+        const pw1 = this.querySelector('[name="password"]').value;
+        const pw2 = this.querySelector('[name="confirmPassword"]').value;
+
+        if (pw1 !== pw2) {
+            e.preventDefault();
+            const el = document.getElementById('error-banner');
+            el.textContent = 'Passwords do not match.';
+            el.style.display = 'block';
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Course Companion - Dashboard</title>
+    <link rel="stylesheet" href="/dashboardtrial.css">
+</head>
+<body> 
+    <nav class="navbar">
+    <h2>Smart Course Companion</h2>
+    <ul>
+        <li><a href="/student/dashboard">Dashboard</a></li>
+        <li><a href="/MYCOURSES.html">My Courses</a></li>
+        <li><a href="/analytics.html">Analytics</a></li>
+    </ul>
+    <div class="nav-icons">
+       
+        <div class="myaccount">
+            <a href="/student/settings-page">
+                <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" 
+                    alt="My Account"/>
+            </a>
+        </div>
+        <div class="logout">
+            <a href="/auth/logout">
+                <img src="https://www.clipartmax.com/png/middle/36-367350_png-file-logout-icon.png" 
+                    alt="Logout"/>
+            </a>
+        </div>
+    </div>
+</nav>
+
+
+    <div class="layout"> 
+
+        <aside class="sidebar">
+           
+            <!--<a class="link" href="Login_s.html">Log Out</a> 
+            
+            <a class = "link" href ="myaccount.html"> My Account </a>-->
+           
+        </aside>
+
+        <main class="content">
+            <h1>Welcome to your Dashboard!</h1>
+           
+
+        <section class="accordions">
+
+    <div class="accordion">
+        <div class="accordion-header">
+            <h2>Upcoming Deadlines</h2>
+        </div>
+        <div class="accordion-content">
+            <ul id="upcomingDeadlinesList" class="deadline-list">
+                <li class="deadline-empty">Loading upcoming assessments...</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="accordion">
+        <div class="accordion-header">
+            <h2>Recently Added Assessments</h2>
+        </div>
+        <div class="accordion-content">
+            <ul id="recentAssessmentsList" class="deadline-list">
+                <li class="deadline-empty">Loading recent assessments...</li>
+            </ul>
+        </div>
+    </div>
+
+</section>
+
+<nav class="calendar-nav">
+    <div class="view-toggle">
+        <button class="nav-box" id="weekBtn">Week</button>
+        <button class="nav-box" id="monthBtn">Month</button>
+    </div>
+
+    <div class="month-controls" id="monthControls">
+        <select id="monthSelect"></select>
+        <select id="yearSelect"></select>
+    </div>
+</nav>
+
+<div class="calendar-container" id="calendar"></div>
+
+<script src="/nav-active.js"></script>
+<script src="/calendartrial.js"></script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+        </main>
+
+
+

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Course Companion - Register</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .error-banner {
+            background: rgba(220, 53, 69, 0.15);
+            border: 1px solid rgba(220, 53, 69, 0.5);
+            color: #ff6b7a;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            font-size: 14px;
+            display: none;
+        }
+        .success-banner {
+            background: rgba(40, 167, 69, 0.15);
+            border: 1px solid rgba(40, 167, 69, 0.5);
+            color: #5cb85c;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            font-size: 14px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- LEFT SIDE -->
+    <div class="left-panel">
+        <h1>Smart Course Companion</h1>
+        <p>Organize. Track. Succeed.</p>
+        <div class="image-box">
+            <img src="/Students.png" alt="Students">
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="right-panel">
+        <div class="login-box">
+
+            <h2>Create Account</h2>
+            <p class="subtitle">Sign up for a student account</p>
+
+            <div class="error-banner"   id="error-banner"></div>
+            <div class="success-banner" id="success-banner"></div>
+
+            <form action="/auth/register-student" method="POST" id="register-form">
+                <input type="email"    name="email"           placeholder="Student Email"      required>
+                <input type="password" name="password"        placeholder="Password"           required>
+                <input type="password" name="confirmPassword" placeholder="Confirm Password"   required>
+
+                <button type="submit">Register</button>
+            </form>
+
+            <p class="admin-link">
+                Already have an account? <a href="/auth/login-student">Login here</a>
+            </p>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const params  = new URLSearchParams(window.location.search);
+    const error   = params.get('error');
+    const success = params.get('success');
+
+    if (error) {
+        const el = document.getElementById('error-banner');
+        el.textContent = error;
+        el.style.display = 'block';
+    }
+    if (success) {
+        const el = document.getElementById('success-banner');
+        el.textContent = success;
+        el.style.display = 'block';
+    }
+
+    document.getElementById('register-form').addEventListener('submit', function(e) {
+        const pw  = this.password.value;
+        const cpw = this.confirmPassword.value;
+        if (pw !== cpw) {
+            e.preventDefault();
+            const el = document.getElementById('error-banner');
+            el.textContent = 'Passwords do not match.';
+            el.style.display = 'block';
+        }
+    });
+</script>
+
+</body>
+</html>

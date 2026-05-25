@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Admin's Main Page</title>
+        <link rel="stylesheet" href="/Design AdminPage.css" />
+        <style>
+            .stat-loading {
+                opacity: 0.4;
+                font-style: italic;
+            }
+            .progress-bar-wrap {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .rectangleBase {
+                position: relative;
+            }
+            .bar-fill {
+                height: 100%;
+                border-radius: inherit;
+                transition: width 0.6s ease;
+                display: flex;
+                align-items: center;
+            }
+            .activity-empty {
+                color: rgba(255,255,255,0.3);
+                font-style: italic;
+                padding: 14px 0;
+            }
+            /* Skeleton pulse for loading state */
+            @keyframes pulse {
+                0%, 100% { opacity: 0.4; }
+                50%       { opacity: 0.9; }
+            }
+            .StatCard img { mix-blend-mode: luminosity; border-radius: 8px; }
+            .skeleton {
+                display: inline-block;
+                background: rgba(255,255,255,0.15);
+                border-radius: 6px;
+                animation: pulse 1.4s ease infinite;
+            }
+        </style>
+    </head>
+    <body>
+
+    <!-- Top Navigation Bar -->
+    <div class="TopNav">
+        <h2>Smart Course Companion</h2>
+        <ul>
+            <a href="/admin/dashboard">
+            <li id="dashboard" style="background-color: rgb(130, 100, 136); border-radius: 15px;"> DashBoard </li>
+            </a>
+            <a href="/admin/courses">
+            <li id="courses"> Courses</li>
+            </a>
+             <a href="/admin/analytics">
+            <li id="grades&charts"> Analytics </li>
+            </a>
+             <a href="/admin/templates">
+            <li id="Courses Template"> Courses Template </li>
+            </a>
+            <a href="/admin/settings-page">
+            <li id="Settings"> Settings </li>
+            </a>
+        </ul>
+
+        <div class="TopNavIcons">
+            <div class="Logout">
+                <a href="/auth/logout">
+                    <img src="https://www.clipartmax.com/png/middle/36-367350_png-file-logout-icon.png" alt="Logout icon" />
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid Container -->
+    <div class="MainContainer">
+        <div class="PageCenter">
+
+            <!-- STATS SECTION -->
+            <div class="NavBar">
+                <div class="Welcome">
+                    <h4>Hey Admin <img src="https://cdn-icons-png.flaticon.com/512/7218/7218647.png" /></h4>
+                    <p>Welcome to Smart Course Companion, we're happy to see you again!</p>
+                    <div class="QuickStats">
+                        <div class="StatCard">
+                            <img src="https://cdn-icons-png.flaticon.com/512/3429/3429149.png" alt="books icon" />
+                            <strong id="stat-active"><span class="skeleton">&nbsp;&nbsp;&nbsp;&nbsp;</span></strong> Active Courses
+                        </div>
+                        <div class="StatCard">
+                            <img src="https://png.pngtree.com/png-clipart/20190614/original/pngtree-vector-male-student-icon-png-image_3785524.jpg" alt="students icon" />
+                            <strong id="stat-students"><span class="skeleton">&nbsp;&nbsp;&nbsp;&nbsp;</span></strong> Students
+                        </div>
+                        <div class="StatCard">
+                            <img src="https://cdn-icons-png.flaticon.com/512/9166/9166986.png" alt="assessment icon" />
+                            <strong id="stat-disabled"><span class="skeleton">&nbsp;&nbsp;&nbsp;&nbsp;</span></strong> Courses Disabled
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECENT VISITED (dynamic via localStorage) -->
+            <div class="Overview">
+                <h3>Recent Visited Pages</h3>
+                <div class="RecentGrid" id="recent-pages-grid">
+                    <!-- filled by JS -->
+                </div>
+            </div>
+
+            <!-- UPCOMING ASSESSMENTS (dynamic) -->
+            <div class="Preview">
+                <h3>Upcoming Assignments Completion</h3>
+                <div id="assessments-preview">
+                    <!-- filled by JS -->
+                    <div class="StatsAssessment">
+                        <p class="skeleton" style="width:120px;height:16px;border-radius:6px;">&nbsp;</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECENT ACTIVITY (dynamic) -->
+            <div class="ActivityFeed">
+                <h3>Recent Activity</h3>
+                <div id="activity-feed">
+                    <!-- filled by JS -->
+                    <p class="skeleton" style="width:200px;height:14px;border-radius:6px;margin:10px 0;">&nbsp;</p>
+                    <p class="skeleton" style="width:160px;height:14px;border-radius:6px;margin:10px 0;">&nbsp;</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const API = '/api';
+
+        // ── Bar colours matching original CSS classes ──
+        const BAR_COLORS = [
+            'linear-gradient(90deg, #6c5ce7, #a29bfe)',
+            'linear-gradient(90deg, #00b894, #55efc4)',
+            'linear-gradient(90deg, #e17055, #fab1a0)',
+            'linear-gradient(90deg, #0984e3, #74b9ff)',
+            'linear-gradient(90deg, #fd79a8, #fdcb6e)',
+        ];
+
+        // ── Activity icon map by event type ──
+        const ACTIVITY_ICONS = {
+            enroll:     { src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRg-XjQo9QmpsWL3g-IapyIfUhm5dy33s3NaA&s', cls: 'enroll' },
+            assessment: { src: 'https://static.vecteezy.com/system/resources/thumbnails/056/780/675/small/checklist-with-magnifying-glass-inspection-and-evaluation-icon-vector.jpg', cls: 'assessment' },
+            submit:     { src: 'https://t4.ftcdn.net/jpg/16/64/33/61/360_F_1664336169_Clg0XmCVy3O2CmzGPYBo9kusDyWPPfQV.jpg', cls: 'submit' },
+            disabled:   { src: 'https://cdn-icons-png.flaticon.com/512/4610/4610214.png', cls: 'disabled' },
+        };
+
+        function timeAgo(dateStr) {
+            if (!dateStr) return '';
+            const diff = Date.now() - new Date(dateStr).getTime();
+            const mins  = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days  = Math.floor(diff / 86400000);
+            if (mins < 60)  return `${mins} minute${mins !== 1 ? 's' : ''} ago`;
+            if (hours < 24) return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+            if (days === 1) return 'Yesterday';
+            return `${days} days ago`;
+        }
+
+        // ════════════════════════════════════
+        // 1. STATS CARDS
+        // ════════════════════════════════════
+        async function loadStats() {
+            try {
+                const res     = await fetch(`${API}/courses`);
+                const courses = await res.json();
+
+                const active   = courses.filter(c => c.is_enabled).length;
+                const disabled = courses.filter(c => !c.is_enabled).length;
+                const students = courses.reduce((sum, c) => sum + Number(c.enrollment_count || 0), 0);
+
+                document.getElementById('stat-active').textContent   = active;
+                document.getElementById('stat-students').textContent = students;
+                document.getElementById('stat-disabled').textContent = disabled;
+            } catch {
+                ['stat-active','stat-students','stat-disabled'].forEach(id => {
+                    document.getElementById(id).textContent = '—';
+                });
+            }
+        }
+
+        // ════════════════════════════════════
+        // 2. UPCOMING ASSESSMENTS PREVIEW
+        //    Shows up to 3 assessments with
+        // ════════════════════════════════════
+        // 2. UPCOMING ASSESSMENTS PREVIEW
+        // ════════════════════════════════════
+        async function loadAssessmentsPreview() {
+            const container = document.getElementById('assessments-preview');
+            try {
+                const courses = await fetch(`${API}/courses`).then(r => r.json());
+
+                // Gather all templates across all courses
+                const all = [];
+                for (const c of courses) {
+                    const tmpl = await fetch(`${API}/templates/${c.id}`).then(r => r.json());
+                    tmpl.forEach(t => { t._courseCode = c.course_code; t._courseId = c.id; });
+                    all.push(...tmpl);
+                }
+
+                // Filter to assessments only, sort by due_date, take top 3
+                const assessments = all
+                    .filter(t => !['Midterm','Final','Exam'].includes(t.category))
+                    .sort((a, b) => new Date(a.due_date || 0) - new Date(b.due_date || 0))
+                    .slice(0, 3);
+
+                if (!assessments.length) {
+                    container.innerHTML = `<p class="activity-empty">No upcoming assessments.</p>`;
+                    return;
+                }
+
+                // Fetch real completion for each assessment's course
+                const gradesFetched = {};
+                for (const t of assessments) {
+                    if (!gradesFetched[t._courseId]) {
+                        gradesFetched[t._courseId] = await fetch(`${API}/grade-summary/${t._courseId}`)
+                            .then(r => r.json()).catch(() => []);
+                    }
+                }
+
+                container.innerHTML = assessments.map((t, i) => {
+                    const courseGrades = gradesFetched[t._courseId] || [];
+                    const gradeData    = courseGrades.find(g =>
+                        g.assessment_name.toLowerCase() === t.assessment_name.toLowerCase()
+                    );
+                    const pct   = gradeData ? Math.min(100, parseFloat(gradeData.avg_pct) || 0) : 0;
+                    const subs  = gradeData ? gradeData.submissions : 0;
+                    const color = BAR_COLORS[i % BAR_COLORS.length];
+                    const due   = t.due_date
+                        ? new Date(t.due_date).toLocaleDateString('en-CA')
+                        : 'No deadline set';
+                    return `
+                        <div class="StatsAssessment">
+                            <h4>${t._courseCode}</h4>
+                            <p>${(t.assessment_name || '').toUpperCase()}</p>
+                            <div class="progress-bar-wrap">
+                                <div class="rectangleBase">
+                                    <div class="bar-fill" style="width:${Math.max(pct,3)}%;background:${color};">
+                                        <span class="barLabel">${pct}%</span>
+                                    </div>
+                                </div>
+                                <span>${subs} completed · ${due}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch {
+                container.innerHTML = `<p style="color:#ff8fa3;">❌ Could not load assessments.</p>`;
+            }
+        }
+
+        // ════════════════════════════════════
+        // 3. RECENT ACTIVITY FEED
+        //    Builds activity items from real
+        //    course & template data, sorted
+        //    by most recently added
+        // ════════════════════════════════════
+        async function loadActivityFeed() {
+            const feed = document.getElementById('activity-feed');
+            try {
+                const res     = await fetch(`${API}/courses`);
+                const courses = await res.json();
+
+                // Build activity events from courses and their templates
+                const events = [];
+
+                for (const c of courses) {
+                    // Course creation event
+                    if (c.created_at) {
+                        events.push({
+                            type: 'assessment',
+                            text: `Course <strong>${c.course_code}</strong> was added`,
+                            time: c.created_at,
+                        });
+                    }
+
+                    // Disabled course event
+                    if (!c.is_enabled) {
+                        events.push({
+                            type: 'disabled',
+                            text: `Course <strong>${c.course_code}</strong> was disabled`,
+                            time: c.updated_at || c.created_at,
+                        });
+                    }
+
+                    // Templates (assessments/exams)
+                    const r    = await fetch(`${API}/templates/${c.id}`);
+                    const tmpl = await r.json();
+                    for (const t of tmpl) {
+                        const isExam = ['Midterm','Final','Quiz','Exam'].includes(t.category);
+                        events.push({
+                            type: isExam ? 'submit' : 'assessment',
+                            text: `${isExam ? 'Exam' : 'Assessment'} <strong>${t.assessment_name}</strong> added to <strong>${c.course_code}</strong>`,
+                            time: t.created_at,
+                        });
+                    }
+                }
+
+                // Sort newest first, take top 7
+                const sorted = events
+                    .filter(e => e.time)
+                    .sort((a, b) => new Date(b.time) - new Date(a.time))
+                    .slice(0, 7);
+
+                // If no timestamps available, show a fallback
+                const toShow = sorted.length ? sorted : events.slice(0, 7);
+
+                if (!toShow.length) {
+                    feed.innerHTML = `<p class="activity-empty">No recent activity yet.</p>`;
+                    return;
+                }
+
+                feed.innerHTML = toShow.map(e => {
+                    const icon = ACTIVITY_ICONS[e.type] || ACTIVITY_ICONS.assessment;
+                    const ago  = e.time ? timeAgo(e.time) : '';
+                    return `
+                        <div class="ActivityItem">
+                            <div class="ActivityIcon ${icon.cls}">
+                                <img src="${icon.src}" alt="${e.type} icon" />
+                            </div>
+                            <div class="ActivityText">
+                                <p>${e.text}</p>
+                                ${ago ? `<span>${ago}</span>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch {
+                feed.innerHTML = `<p style="color:#ff8fa3;">❌ Could not load activity.</p>`;
+            }
+        }
+
+        // ════════════════════════════════════
+        // 4. RECENT VISITED PAGES
+        //    Reads history saved by each page
+        //    into localStorage
+        // ════════════════════════════════════
+
+        // All pages that can appear in the grid
+        const PAGE_META = {
+            'Courses Page.html':     { label: 'Courses',          thumb: null, href: '/admin/courses' },
+            'Analyticss.html':       { label: 'Analytics',        thumb: null, href: '/admin/analytics' },
+            'Courses Template.html': { label: 'Courses Template', thumb: null, href: '/admin/templates' },
+            'Settings.html':         { label: 'Settings',         thumb: null, href: '/admin/settings-page' },
+        };
+
+        // CSS-generated mini preview for pages without a real thumbnail
+        const CSS_THUMBS = {
+            'Analyticss.html': `
+                <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1040 0%,#2d1b69 100%);padding:10px;box-sizing:border-box;border-radius:10px;overflow:hidden;">
+                    <div style="background:rgba(255,255,255,0.08);height:10px;border-radius:4px;margin-bottom:8px;display:flex;align-items:center;padding:0 6px;gap:3px;">
+                        <div style="width:30px;height:4px;background:rgba(255,255,255,0.5);border-radius:2px;"></div>
+                        <div style="flex:1;"></div>
+                        <div style="width:8px;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;"></div>
+                        <div style="width:8px;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;"></div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:4px;margin-bottom:6px;">
+                        <div style="font-size:8px;">📊</div>
+                        <div style="width:40px;height:5px;background:rgba(255,255,255,0.7);border-radius:2px;"></div>
+                    </div>
+                    <!-- Summary pills -->
+                    <div style="display:flex;gap:3px;margin-bottom:6px;">
+                        <div style="background:rgba(108,92,231,0.4);border-radius:4px;padding:2px 5px;height:10px;width:30px;"></div>
+                        <div style="background:rgba(0,184,148,0.4);border-radius:4px;padding:2px 5px;height:10px;width:30px;"></div>
+                        <div style="background:rgba(225,112,85,0.4);border-radius:4px;padding:2px 5px;height:10px;width:30px;"></div>
+                        <div style="background:rgba(9,132,227,0.4);border-radius:4px;padding:2px 5px;height:10px;width:30px;"></div>
+                    </div>
+                    <!-- Progress bars -->
+                    <div style="background:rgba(255,255,255,0.07);border-radius:6px;padding:6px;display:flex;flex-direction:column;gap:4px;">
+                        <div style="display:flex;align-items:center;gap:4px;">
+                            <div style="width:30px;height:3px;background:rgba(255,255,255,0.3);border-radius:2px;flex-shrink:0;"></div>
+                            <div style="flex:1;height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;"><div style="width:75%;height:100%;background:linear-gradient(90deg,#6c5ce7,#a29bfe);border-radius:3px;"></div></div>
+                            <div style="width:15px;height:3px;background:rgba(255,255,255,0.2);border-radius:2px;flex-shrink:0;"></div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:4px;">
+                            <div style="width:30px;height:3px;background:rgba(255,255,255,0.3);border-radius:2px;flex-shrink:0;"></div>
+                            <div style="flex:1;height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;"><div style="width:55%;height:100%;background:linear-gradient(90deg,#00b894,#55efc4);border-radius:3px;"></div></div>
+                            <div style="width:15px;height:3px;background:rgba(255,255,255,0.2);border-radius:2px;flex-shrink:0;"></div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:4px;">
+                            <div style="width:30px;height:3px;background:rgba(255,255,255,0.3);border-radius:2px;flex-shrink:0;"></div>
+                            <div style="flex:1;height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;"><div style="width:90%;height:100%;background:linear-gradient(90deg,#e17055,#fab1a0);border-radius:3px;"></div></div>
+                            <div style="width:15px;height:3px;background:rgba(255,255,255,0.2);border-radius:2px;flex-shrink:0;"></div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:4px;">
+                            <div style="width:30px;height:3px;background:rgba(255,255,255,0.3);border-radius:2px;flex-shrink:0;"></div>
+                            <div style="flex:1;height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;"><div style="width:40%;height:100%;background:linear-gradient(90deg,#0984e3,#74b9ff);border-radius:3px;"></div></div>
+                            <div style="width:15px;height:3px;background:rgba(255,255,255,0.2);border-radius:2px;flex-shrink:0;"></div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            'Courses Template.html': `
+                <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1040 0%,#2d1b69 100%);padding:10px;box-sizing:border-box;border-radius:10px;overflow:hidden;">
+                    <div style="background:rgba(255,255,255,0.08);height:10px;border-radius:4px;margin-bottom:8px;display:flex;align-items:center;padding:0 6px;gap:3px;">
+                        <div style="width:30px;height:4px;background:rgba(255,255,255,0.5);border-radius:2px;"></div>
+                        <div style="flex:1;"></div>
+                        <div style="width:8px;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;"></div>
+                        <div style="width:8px;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;"></div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:4px;margin-bottom:6px;">
+                        <div style="font-size:8px;">📋</div>
+                        <div style="width:55px;height:5px;background:rgba(255,255,255,0.7);border-radius:2px;"></div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+                        <!-- Saved templates table -->
+                        <div style="background:rgba(255,255,255,0.07);border-radius:5px;padding:5px;">
+                            <div style="width:35px;height:3px;background:rgba(0,206,201,0.6);border-radius:2px;margin-bottom:4px;"></div>
+                            <div style="display:flex;flex-direction:column;gap:3px;">
+                                <div style="display:flex;gap:2px;align-items:center;">
+                                    <div style="width:18px;height:3px;background:rgba(108,92,231,0.6);border-radius:2px;"></div>
+                                    <div style="flex:1;height:3px;background:rgba(255,255,255,0.15);border-radius:2px;"></div>
+                                    <div style="width:10px;height:5px;background:rgba(255,255,255,0.1);border-radius:2px;"></div>
+                                </div>
+                                <div style="display:flex;gap:2px;align-items:center;">
+                                    <div style="width:22px;height:3px;background:rgba(0,184,148,0.6);border-radius:2px;"></div>
+                                    <div style="flex:1;height:3px;background:rgba(255,255,255,0.15);border-radius:2px;"></div>
+                                    <div style="width:10px;height:5px;background:rgba(255,255,255,0.1);border-radius:2px;"></div>
+                                </div>
+                                <div style="display:flex;gap:2px;align-items:center;">
+                                    <div style="width:15px;height:3px;background:rgba(225,112,85,0.6);border-radius:2px;"></div>
+                                    <div style="flex:1;height:3px;background:rgba(255,255,255,0.15);border-radius:2px;"></div>
+                                    <div style="width:10px;height:5px;background:rgba(255,255,255,0.1);border-radius:2px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Template builder -->
+                        <div style="background:rgba(255,255,255,0.07);border-radius:5px;padding:5px;">
+                            <div style="width:35px;height:3px;background:rgba(253,121,168,0.6);border-radius:2px;margin-bottom:4px;"></div>
+                            <div style="background:rgba(255,255,255,0.05);border-radius:3px;height:8px;margin-bottom:3px;"></div>
+                            <div style="display:flex;flex-direction:column;gap:2px;margin-bottom:4px;">
+                                <div style="display:flex;gap:2px;">
+                                    <div style="flex:2;height:5px;background:rgba(255,255,255,0.08);border-radius:2px;"></div>
+                                    <div style="flex:1;height:5px;background:rgba(255,255,255,0.08);border-radius:2px;"></div>
+                                </div>
+                                <div style="display:flex;gap:2px;">
+                                    <div style="flex:2;height:5px;background:rgba(255,255,255,0.08);border-radius:2px;"></div>
+                                    <div style="flex:1;height:5px;background:rgba(255,255,255,0.08);border-radius:2px;"></div>
+                                </div>
+                            </div>
+                            <!-- Ponderation bar -->
+                            <div style="height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;margin-bottom:3px;">
+                                <div style="width:60%;height:100%;background:linear-gradient(90deg,#6c5ce7,#a29bfe);border-radius:2px;"></div>
+                            </div>
+                            <div style="width:100%;height:6px;background:rgba(108,92,231,0.5);border-radius:3px;"></div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            'Settings.html': `
+                <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1040 0%,#2d1b69 100%);padding:10px;box-sizing:border-box;border-radius:10px;overflow:hidden;">
+                    <!-- Top nav bar -->
+                    <div style="background:rgba(255,255,255,0.08);height:10px;border-radius:4px;margin-bottom:8px;display:flex;align-items:center;padding:0 4px;gap:3px;">
+                        <div style="width:30px;height:4px;background:rgba(255,255,255,0.5);border-radius:2px;"></div>
+                        <div style="flex:1;"></div>
+                        <div style="width:10px;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;"></div>
+                        <div style="width:10px;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;"></div>
+                    </div>
+                    <!-- Page title -->
+                    <div style="display:flex;align-items:center;gap:4px;margin-bottom:6px;">
+                        <div style="font-size:8px;">⚙️</div>
+                        <div style="width:35px;height:5px;background:rgba(255,255,255,0.7);border-radius:2px;"></div>
+                    </div>
+                    <!-- Profile card -->
+                    <div style="background:rgba(255,255,255,0.07);border-radius:6px;padding:6px;margin-bottom:5px;">
+                        <div style="display:flex;align-items:center;gap:5px;margin-bottom:5px;">
+                            <div style="width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,#6c5ce7,#a29bfe);display:flex;align-items:center;justify-content:center;font-size:5px;color:white;font-weight:bold;flex-shrink:0;">JD</div>
+                            <div>
+                                <div style="width:40px;height:3px;background:rgba(255,255,255,0.6);border-radius:2px;margin-bottom:2px;"></div>
+                                <div style="width:55px;height:3px;background:rgba(255,255,255,0.3);border-radius:2px;"></div>
+                            </div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">
+                            <div style="background:rgba(255,255,255,0.05);height:12px;border-radius:3px;"></div>
+                            <div style="background:rgba(255,255,255,0.05);height:12px;border-radius:3px;"></div>
+                            <div style="background:rgba(255,255,255,0.05);height:12px;border-radius:3px;"></div>
+                            <div style="background:rgba(255,255,255,0.05);height:12px;border-radius:3px;"></div>
+                        </div>
+                    </div>
+                    <!-- Two small cards -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+                        <div style="background:rgba(255,255,255,0.07);border-radius:5px;padding:5px;">
+                            <div style="width:20px;height:3px;background:rgba(0,206,201,0.6);border-radius:2px;margin-bottom:3px;"></div>
+                            <div style="display:flex;gap:3px;justify-content:space-around;">
+                                <div style="text-align:center;"><div style="width:10px;height:8px;background:rgba(108,92,231,0.5);border-radius:2px;margin:0 auto;"></div></div>
+                                <div style="text-align:center;"><div style="width:10px;height:8px;background:rgba(0,184,148,0.5);border-radius:2px;margin:0 auto;"></div></div>
+                                <div style="text-align:center;"><div style="width:10px;height:8px;background:rgba(225,112,85,0.5);border-radius:2px;margin:0 auto;"></div></div>
+                            </div>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.07);border-radius:5px;padding:5px;">
+                            <div style="width:20px;height:3px;background:rgba(253,121,168,0.6);border-radius:2px;margin-bottom:3px;"></div>
+                            <div style="display:flex;flex-direction:column;gap:3px;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <div style="width:35px;height:3px;background:rgba(255,255,255,0.2);border-radius:2px;"></div>
+                                    <div style="width:10px;height:5px;background:rgba(108,92,231,0.5);border-radius:3px;"></div>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <div style="width:30px;height:3px;background:rgba(255,255,255,0.2);border-radius:2px;"></div>
+                                    <div style="width:10px;height:5px;background:rgba(0,184,148,0.5);border-radius:3px;"></div>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <div style="width:28px;height:3px;background:rgba(255,255,255,0.2);border-radius:2px;"></div>
+                                    <div style="width:10px;height:5px;background:rgba(225,112,85,0.5);border-radius:3px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+        };
+
+        function loadRecentPages() {
+            const grid = document.getElementById('recent-pages-grid');
+
+            let history = [];
+            try {
+                history = JSON.parse(localStorage.getItem('scc_page_history') || '[]');
+            } catch { history = []; }
+
+            const seen = [];
+            for (const page of history) {
+                if (!seen.includes(page)) seen.push(page);
+                if (seen.length === 3) break;
+            }
+
+            const toShow = seen.length
+                ? seen
+                : ['Courses Page.html', 'Analyticss.html', 'Courses Template.html'];
+
+            grid.innerHTML = toShow.map(file => {
+                const meta = PAGE_META[file] || { label: file.replace('.html',''), thumb: null, href: file };
+                const cssThumb = CSS_THUMBS[file];
+                const href = meta.href || file;
+
+                const thumbHTML = cssThumb
+                    ? `<a href="${href}" style="display:block;width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;">${cssThumb}</a>`
+                    : `<a href="${href}"><img src="${meta.thumb}" alt="${meta.label} thumbnail" /></a>`;
+
+                return `
+                    <div class="PageCard">
+                        ${thumbHTML}
+                        <p>${meta.label}</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ── Load everything ──
+        loadStats();
+        loadAssessmentsPreview();
+        loadActivityFeed();
+        loadRecentPages();
+    </script>
+
+    </body>
+</html>

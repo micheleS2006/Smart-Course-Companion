@@ -1,0 +1,404 @@
+/* RESET & BASE */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+html, body {
+    height: 100%;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f0c1a, #1a1040, #111827);
+    color: white;
+}
+
+/* TOP NAVIGATION BAR */
+.TopNav {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(14px);        /* Creates a frosted glass effect, it blurs everything the element */
+    -webkit-backdrop-filter: blur(14px); 
+    padding: 0 30px;
+    height: 52px; 
+    position: sticky;  /* As the user scroll the navigation bar will remain in place */
+    top: 0;
+    z-index: 100;  /* Nav bar will be on top of everything */
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+}
+
+.TopNav h2 {
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 28px 0 0;
+    white-space: nowrap;  /* Tells the browser, to not wrap text onto a new line, no matter how long it gets */
+    flex-shrink: 0;  /* Element will not shrink, hold size */
+}
+
+.TopNav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    gap: 4px;
+    flex: 1;  /* Element fill all available space */
+}
+
+.TopNav li {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 13px;
+    font-variant: small-caps;
+    padding: 6px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.2s;  /* Transition as you move to other pages name */
+    white-space: nowrap;
+    color: rgba(255, 255, 255, 0.6);
+    height: 32px;
+}
+
+.TopNav li:hover {
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+
+
+.TopNav a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Icons pinned to the far right  */
+.TopNavIcons {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    
+}
+
+/* MAIN CONTAINER */
+.MainContainer {
+    padding: 0 60px 60px 60px;
+    box-sizing: border-box;
+}
+
+.PageCenter {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding-top: 16px;
+}
+
+/* SHARED GLASS CARD  */
+.NavBar,
+.Overview,
+.Preview {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    box-sizing: border-box;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* WELCOME CARD */
+.NavBar {
+    padding: 30px 40px;
+}
+
+.Welcome h4 {
+    font-size: 24px;
+    margin: 0;
+    color: white;
+}
+
+.Welcome p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 4px 0 0 0;
+}
+
+.Welcome h4 img {
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+}
+
+.QuickStats {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 15px;
+    flex-wrap: wrap;  /* "If the items do fit push them to the next line, responsive */
+}
+
+.StatCard {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+    white-space: nowrap;
+    transition: background 0.2s;
+}
+
+.StatCard:hover {
+    background: rgba(74, 108, 247, 0.2);
+}
+
+.StatCard img {
+    width: 25px;
+    height: 25px;
+}
+
+
+.lightmode {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.lightmode img {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    transition: background 0.2s, border-radius 0.2s;
+}
+.Logout img {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 5px;
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    transition: background 0.2s, border-radius 0.2s;
+}
+
+.lightmode img:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 12px;
+}
+
+/* RECENT VISITED PAGES */
+.Overview {
+    padding: 20px;
+}
+
+.Overview > h4,         /* Selector that targets direct children of .Overview */
+.Overview > h3 {
+    font-size: 16px;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.RecentGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 220px));
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.PageCard {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s, background 0.2s;
+    color: white;
+}
+
+.PageCard:hover {
+    transform: scale(1.06); /* Image get increased */
+    background: rgba(74, 108, 247, 0.2);
+}
+
+.PageCard img {
+    width: 100%;
+    height: 80px;
+    object-fit: cover; /* Image fill the box */
+    border-radius: 8px;
+}
+
+.PageCard p {
+    margin: 8px 0 0 0;
+    font-size: 14px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* ASSESSMENT PROGRESS BARS */
+.Preview {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.Preview > h4,       /* Selector that targets direct children of .Overview */
+.Preview > h3 {
+    font-size: 16px;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.StatsAssessment {
+    margin-bottom: 18px;
+}
+
+.StatsAssessment h4 {
+    font-size: 14px;
+    color: white;
+    margin: 2px 0;
+}
+
+.StatsAssessment p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 2px 0;
+}
+
+
+/* Track */
+.rectangleBase {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    height: 20px;
+    border-radius: 5px;
+    position: relative;   /* Element does not move and becomes the reference point that absolutely positioned children attach to */
+}
+
+/* Filled bars */
+.rectangleASS1 {
+    background: linear-gradient(90deg, #4a6cf7, #00cec9);
+    width: 39.74%;
+    height: 100%;
+    border-radius: 5px;
+    position: relative;
+}
+
+.rectangleASS2 {
+    background: linear-gradient(90deg, #4a6cf7, #00cec9);
+    width: 30.49%;
+    height: 100%;
+    border-radius: 5px;
+    position: relative;
+}
+
+.rectangleASS3 {
+    background: linear-gradient(90deg, #4a6cf7, #00cec9);
+    width: 89.62%;
+    height: 100%;
+    border-radius: 5px;
+    position: relative;
+}
+
+.barLabel {
+    position: absolute;  /* Acts as a "sticky note", it floats on top of everything */
+    right: 0;
+    top: -20px;
+    font-size: 12px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+}
+
+.barCount {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 110px;  /* Element will never shrink below this value */
+}
+
+
+/*  RECENT ACTIVITY FEED  */
+.ActivityFeed {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    box-sizing: border-box;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    margin-bottom: 10px;
+}
+
+.ActivityFeed > h3 {
+    font-size: 16px;
+    color: white;
+    margin-bottom: 14px;
+}
+
+.ActivityItem {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    transition: background 0.2s;
+}
+.ActivityItem img {
+     width: 25px;
+    height: 25px;
+}
+
+
+.ActivityItem:hover {
+    background: rgba(74, 108, 247, 0.08);
+    border-radius: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.ActivityIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.ActivityIcon.enroll     { background: rgba(74, 108, 247, 0.2);  border: 1px solid rgba(74, 108, 247, 0.35); }
+.ActivityIcon.assessment { background: rgba(0, 206, 201, 0.2);   border: 1px solid rgba(0, 206, 201, 0.35); }
+.ActivityIcon.submit     { background: rgba(0, 200, 100, 0.2);   border: 1px solid rgba(0, 200, 100, 0.35); }
+.ActivityIcon.disabled   { background: rgba(255, 107, 107, 0.2); border: 1px solid rgba(255, 107, 107, 0.35); }
+
+.ActivityText p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+}
+
+.ActivityText p strong {
+    color: white;
+}
+
+.ActivityText span {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    margin-top: 2px;
+    display: block;
+}

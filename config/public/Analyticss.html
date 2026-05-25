@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Analytics</title>
+        <link rel="stylesheet" href="/DesignAnalytics.css" />
+        <style>
+            @keyframes pulse {
+                0%, 100% { opacity: 0.4; }
+                50%       { opacity: 0.9; }
+            }
+            .skeleton {
+                display: inline-block;
+                background: rgba(255,255,255,0.15);
+                border-radius: 6px;
+                animation: pulse 1.4s ease infinite;
+            }
+            .skeleton-block {
+                background: rgba(255,255,255,0.1);
+                border-radius: 10px;
+                animation: pulse 1.4s ease infinite;
+                margin: 14px 0;
+            }
+            .CourseTab.active {
+                background: rgba(130,100,136,0.5);
+                border-radius: 10px;
+            }
+            .empty-state {
+                color: rgba(255,255,255,0.3);
+                font-style: italic;
+                padding: 20px 0;
+                text-align: center;
+            }
+            .deadline-item {
+                display: inline;
+            }
+        </style>
+    </head>
+    <body>
+
+    <!-- TOP NAV -->
+    <div class="TopNav">
+        <h2>Smart Course Companion</h2>
+        <ul>
+           <a href="/admin/dashboard">
+            <li id="dashboard"> DashBoard </li>
+            </a>
+            <a href="/admin/courses">
+            <li id="courses"> Courses </li>
+            </a>
+             <a href="/admin/analytics">
+            <li id="grades&charts" style="background-color: rgb(130, 100, 136); border-radius: 15px;"> Analytics </li>
+            </a>
+            <a href="/admin/templates">
+            <li id="Courses Template"> Courses Template</li>
+            </a>
+            <a href="/admin/settings-page">
+            <li id="Settings"> Settings </li>
+            </a>
+        </ul>
+        <div class="TopNavIcons">
+            <div class="Logout">
+                <a href="/auth/logout">
+                    <img src="https://www.clipartmax.com/png/middle/36-367350_png-file-logout-icon.png" alt="Logout icon" />
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="MainContainer">
+        <div class="PageCenter">
+            <div class="GlassCard">
+                <h3 id="page-title">Grades & Charts</h3>
+
+                <!-- SUMMARY PILLS -->
+                <div class="SummaryRow">
+                    <div class="SummaryPill">
+                        <div class="pill-num" id="pill-courses"><span class="skeleton">&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+                        <div class="pill-label">Active Courses</div>
+                    </div>
+                    <div class="SummaryPill">
+                        <div class="pill-num" id="pill-students"><span class="skeleton">&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+                        <div class="pill-label">Total Students</div>
+                    </div>
+                    <div class="SummaryPill">
+                        <div class="pill-num" id="pill-assessments"><span class="skeleton">&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+                        <div class="pill-label">Assessments</div>
+                    </div>
+                    <div class="SummaryPill">
+                        <div class="pill-num" id="pill-weight"><span class="skeleton">&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+                        <div class="pill-label">Avg Completion</div>
+                    </div>
+                </div>
+
+                <!-- FILTER TABS -->
+                <div class="CourseTabs" id="course-tabs">
+                    <a href="#" class="CourseTab active" data-filter="all">All Courses</a>
+                    <!-- course tabs injected by JS -->
+                </div>
+
+                <!-- DEADLINE WARNING -->
+                <div class="DeadlineStrip" id="deadline-strip" style="display:none;">
+                    <span>⚠️</span>
+                    <p id="deadline-text"></p>
+                </div>
+
+                <!-- COURSE SECTIONS -->
+                <div id="courses-container">
+                    <div class="skeleton-block" style="height:120px;"></div>
+                    <div class="skeleton-block" style="height:120px;margin-top:20px;"></div>
+                </div>
+
+                <hr class="SectionDivider" />
+
+                <!-- EXPORT -->
+                <div class="ExportRow">
+                    <p id="export-label">Export completion data</p>
+                    <div class="ExportButtons">
+                        <a href="#" class="BtnExport" id="btn-csv">⬇ Export CSV</a>
+                        <a href="#" class="BtnExport" id="btn-pdf">⬇ Export PDF</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script> //script in the html, not ideal
+        const API = '/api';
+
+        // Badge colour per course code
+        function badgeClass(code) {
+            const prefix = code.split(' ')[0].toLowerCase();
+            const map = {
+                soen: 'badge-soen',
+                comp: 'badge-comp',
+                engr: 'badge-engr',
+                math: 'badge-engr',
+                elec: 'badge-comp'
+            };
+            return map[prefix] || 'badge-soen';
+        }
+
+        // Completion status thresholds
+        function statusInfo(pct) {
+            if (pct >= 75) return { cls: 'status-high', fillCls: 'fill-high', label: 'On Track' };
+            if (pct >= 40) return { cls: 'status-medium', fillCls: 'fill-medium', label: 'In Progress' };
+            return { cls: 'status-low', fillCls: 'fill-low', label: 'Low Completion' };
+        }
+
+        // Format a datetime string nicely
+        function fmtDate(d) {
+            if (!d) return null;
+            return new Date(d).toLocaleDateString('en-CA', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
+        // Escape HTML for safe PDF/print content
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        
+        function soonDeadline(d) {
+            if (!d) return false;
+            const diff = new Date(d) - Date.now();
+            return diff > 0 && diff < 48 * 3600 * 1000;
+        }
+
+        
+        async function loadAnalytics() {
+            try {
+                const res = await fetch(`${API}/courses`);
+                const courses = await res.json();
+
+                //Fetch all templates in parallel
+                const templateResults = await Promise.all(
+                    courses.map(c =>
+                        fetch(`${API}/templates/${c.id}`)
+                            .then(r => r.json())
+                            .then(tmpl => {
+                                tmpl.forEach(t => { t._course = c; });
+                                return tmpl;
+                            })
+                    )
+                );
+
+                const allTemplates = templateResults.flat();
+                const activeCourses = courses.filter(c => c.is_enabled);
+
+                
+                const totalStudents = activeCourses.reduce((s, c) => s + Number(c.enrollment_count || 0), 0);
+                const totalAssessments = allTemplates.length;
+                const terms = [...new Set(activeCourses.map(c => c.term).filter(Boolean))];
+
+                document.getElementById('pill-courses').textContent = activeCourses.length;
+                document.getElementById('pill-students').textContent = totalStudents;
+                document.getElementById('pill-assessments').textContent = totalAssessments;
+                document.getElementById('page-title').textContent =
+                    `Grades & Charts${terms.length ? ' — ' + terms[0] : ''}`;
+                document.getElementById('export-label').textContent =
+                    `Export completion data${terms.length ? ' for ' + terms[0] : ''}`;
+
+                
+                const upcoming = allTemplates.filter(t => soonDeadline(t.due_date));
+                if (upcoming.length) {
+                    const names = upcoming.map(t => `${t._course.course_code} ${t.assessment_name}`).join(' and ');
+                    document.getElementById('deadline-text').innerHTML =
+                        `<strong>${upcoming.length} assessment${upcoming.length > 1 ? 's' : ''}</strong> ` +
+                        `ha${upcoming.length > 1 ? 've' : 's'} deadlines within the next 48 hours — ${names}.`;
+                    document.getElementById('deadline-strip').style.display = '';
+                }
+
+                
+                const tabsEl = document.getElementById('course-tabs');
+                activeCourses.forEach(c => {
+                    const a = document.createElement('a');
+                    a.href = `#course-${c.id}`;
+                    a.className = 'CourseTab';
+                    a.dataset.filter = String(c.id);
+                    a.textContent = c.course_code;
+                    tabsEl.appendChild(a);
+                });
+
+                
+                tabsEl.addEventListener('click', e => {
+                    const tab = e.target.closest('.CourseTab');
+                    if (!tab) return;
+                    e.preventDefault();
+
+                    tabsEl.querySelectorAll('.CourseTab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    const filter = tab.dataset.filter;
+                    document.querySelectorAll('.CourseSection').forEach(sec => {
+                        sec.style.display = (filter === 'all' || sec.dataset.courseId === filter) ? '' : 'none';
+                    });
+                    document.querySelectorAll('.SectionDivider').forEach(d => {
+                        d.style.display = filter === 'all' ? '' : 'none';
+                    });
+                });
+
+                // ── Course sections — fetch real grades ──
+                const container = document.getElementById('courses-container');
+
+                if (!activeCourses.length) {
+                    container.innerHTML = `<p class="empty-state">No active courses found.</p>`;
+                    document.getElementById('pill-weight').textContent = '0%';
+                    return;
+                }
+
+                // Fetch grades summary for all active courses in parallel
+                const gradesResults = await Promise.all(
+                    activeCourses.map(c =>
+                        fetch(`${API}/grades/${c.id}/all`)
+                            .then(r => r.json())
+                            .catch(() => [])
+                    )
+                );
+
+                // Build lookup: courseId -> { assessmentName -> {submissions, avg_pct} }
+                const gradesMap = {};
+                activeCourses.forEach((c, i) => {
+                    gradesMap[c.id] = {};
+                    (gradesResults[i] || []).forEach(g => {
+                        gradesMap[c.id][g.assessment_name.toLowerCase()] = g;
+                    });
+                });
+
+                let totalPct = 0;
+                let totalBars = 0;
+
+                container.innerHTML = activeCourses.map((c, idx) => {
+                    const templates = allTemplates.filter(t => t._course.id === c.id);
+                    const courseGrades = gradesMap[c.id] || {};
+
+                    const barsHTML = templates.length
+                        ? templates.map(t => {
+                            const gradeData = courseGrades[t.assessment_name.toLowerCase()];
+                            const pct = gradeData ? Math.min(100, parseFloat(gradeData.avg_pct) || 0) : 0;
+                            const submissions = gradeData ? gradeData.submissions : 0;
+                            const info = statusInfo(pct);
+                            const due = fmtDate(t.due_date);
+
+                            totalPct += pct;
+                            totalBars++;
+
+                            return `
+                                <div class="AssessmentBar">
+                                    <div class="BarTopRow">
+                                        <span class="BarName">
+                                            ${t.assessment_name}
+                                            <span class="BarCategory">${t.category || ''}</span>
+                                            ${due ? `<span style="font-size:11px;opacity:0.5;margin-left:6px;">Due ${due}</span>` : ''}
+                                        </span>
+                                        <div class="BarMeta">
+                                            <span class="StatusBadge ${info.cls}">${info.label}</span>
+                                            <span class="BarPercent">${pct}%</span>
+                                            <span class="BarCount">${submissions} completed</span>
+                                        </div>
+                                    </div>
+                                    <div class="BarTrack">
+                                        <div class="BarFill ${info.fillCls}" style="width:${pct}%"></div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')
+                        : `<p class="empty-state">No assessments added yet for this course.</p>`;
+
+                    const divider = idx < activeCourses.length - 1
+                        ? `<hr class="SectionDivider" />`
+                        : '';
+
+                    return `
+                        <div class="CourseSection" id="course-${c.id}" data-course-id="${c.id}">
+                            <div class="CourseSectionHeader">
+                                <span class="CourseCodeBadge ${badgeClass(c.course_code)}">${c.course_code}</span>
+                                <div>
+                                    <h4>${c.course_name}</h4>
+                                    <p>${Number(c.enrollment_count || 0)} students enrolled</p>
+                                </div>
+                            </div>
+                            ${barsHTML}
+                        </div>
+                        ${divider}
+                    `;
+                }).join('');
+
+                // ── Update avg completion pill ──
+                const avgCompletion = totalBars > 0 ? Math.round(totalPct / totalBars) : 0;
+                document.getElementById('pill-weight').textContent = avgCompletion + '%';
+
+                // ── CSV Export ──
+                document.getElementById('btn-csv').addEventListener('click', e => {
+                    e.preventDefault();
+
+                    const rows = [[
+                        'Course Code',
+                        'Course Name',
+                        'Assessment',
+                        'Category',
+                        'Weight (%)',
+                        'Due Date'
+                    ]];
+
+                    allTemplates.forEach(t => {
+                        rows.push([
+                            t._course.course_code,
+                            t._course.course_name,
+                            t.assessment_name,
+                            t.category || '',
+                            t.weight || 0,
+                            fmtDate(t.due_date) || ''
+                        ]);
+                    });
+
+                    const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+                    const blob = new Blob([csv], { type: 'text/csv' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'analytics_export.csv';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                });
+
+                // ── PDF Export removed the printer pop up because it was messing with the page 
+                //after exporting
+                document.getElementById('btn-pdf').addEventListener('click', e => {
+                    e.preventDefault();
+
+                    const activeTab = document.querySelector('.CourseTab.active');
+                    const selectedFilter = activeTab ? activeTab.dataset.filter : 'all';
+
+                    let filteredCourses = activeCourses;
+                    if (selectedFilter !== 'all') {
+                        filteredCourses = activeCourses.filter(c => String(c.id) === selectedFilter);
+                    }
+
+                    const printWindow = window.open('', '_blank');
+
+                    if (!printWindow) {
+                        alert('Please allow pop-ups to export the PDF.');
+                        return;
+                    }
+
+                    let content = `
+                        <html>
+                        <head>
+                            <title>Analytics PDF Export</title>
+                            <style>
+                                body {
+                                    font-family: Arial, sans-serif;
+                                    padding: 30px;
+                                    color: #222;
+                                }
+                                h1 {
+                                    text-align: center;
+                                    color: #2d1b6e;
+                                    margin-bottom: 8px;
+                                }
+                                h2 {
+                                    margin-top: 30px;
+                                    color: #6a4fcf;
+                                    border-bottom: 1px solid #ccc;
+                                    padding-bottom: 5px;
+                                }
+                                .subtitle {
+                                    text-align: center;
+                                    color: #666;
+                                    margin-bottom: 25px;
+                                    font-size: 14px;
+                                }
+                                .summary {
+                                    margin: 20px 0 30px 0;
+                                    font-size: 15px;
+                                    line-height: 1.8;
+                                }
+                                table {
+                                    width: 100%;
+                                    border-collapse: collapse;
+                                    margin-top: 15px;
+                                    margin-bottom: 25px;
+                                }
+                                th, td {
+                                    border: 1px solid #ccc;
+                                    padding: 8px;
+                                    text-align: left;
+                                    font-size: 14px;
+                                }
+                                th {
+                                    background-color: #6a4fcf;
+                                    color: white;
+                                }
+                                tr:nth-child(even) td {
+                                    background: #f7f4ff;
+                                }
+                                .empty-note {
+                                    font-style: italic;
+                                    color: #666;
+                                    margin-top: 10px;
+                                }
+                                @media print {
+                                    body {
+                                        padding: 10px;
+                                    }
+                                    a {
+                                        text-decoration: none;
+                                        color: inherit;
+                                    }
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <h1>Smart Course Companion</h1>
+                            <div class="subtitle">Admin Analytics Report</div>
+                            <div class="summary">
+                                <div><strong>Active Courses:</strong> ${escapeHtml(activeCourses.length)}</div>
+                                <div><strong>Total Students:</strong> ${escapeHtml(document.getElementById('pill-students').textContent)}</div>
+                                <div><strong>Assessments:</strong> ${escapeHtml(document.getElementById('pill-assessments').textContent)}</div>
+                                <div><strong>Average Completion:</strong> ${escapeHtml(document.getElementById('pill-weight').textContent)}</div>
+                            </div>
+                    `;
+
+                    filteredCourses.forEach(c => {
+                        const templates = allTemplates.filter(t => t._course.id === c.id);
+                        const courseGrades = gradesMap[c.id] || {};
+
+                        content += `
+                            <h2>${escapeHtml(c.course_code)} — ${escapeHtml(c.course_name)}</h2>
+                            <p><strong>Students enrolled:</strong> ${escapeHtml(Number(c.enrollment_count || 0))}</p>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Assessment</th>
+                                        <th>Category</th>
+                                        <th>Due Date</th>
+                                        <th>Average %</th>
+                                        <th>Completed</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+
+                        if (templates.length) {
+                            templates.forEach(t => {
+                                const key = t.assessment_name.toLowerCase();
+                                const gradeData = courseGrades[key];
+                                const pct = gradeData ? Math.min(100, parseFloat(gradeData.avg_pct) || 0) : 0;
+                                const submissions = gradeData ? gradeData.submissions : 0;
+                                const due = fmtDate(t.due_date) || '-';
+                                const info = statusInfo(pct);
+
+                                content += `
+                                    <tr>
+                                        <td>${escapeHtml(t.assessment_name)}</td>
+                                        <td>${escapeHtml(t.category || '-')}</td>
+                                        <td>${escapeHtml(due)}</td>
+                                        <td>${escapeHtml(pct + '%')}</td>
+                                        <td>${escapeHtml(submissions)}</td>
+                                        <td>${escapeHtml(info.label)}</td>
+                                    </tr>
+                                `;
+                            });
+                        } else {
+                            content += `
+                                <tr>
+                                    <td colspan="6">No assessments added yet for this course.</td>
+                                </tr>
+                            `;
+                        }
+
+                        content += `
+                                </tbody>
+                            </table>
+                        `;
+                    });
+
+                    content += `
+                        </body>
+                        </html>
+                    `;
+
+                    printWindow.document.open();
+                    printWindow.document.write(content);
+                    printWindow.document.close();
+
+                    printWindow.onload = () => {
+                        printWindow.focus();
+                        printWindow.print();
+                    };
+                });
+
+            } catch (err) {
+                document.getElementById('courses-container').innerHTML =
+                    `<p style="color:#ff8fa3;text-align:center;padding:30px;">❌ Cannot connect to server. Is it running?</p>`;
+                console.error(err);
+            }
+        }
+
+        // ── Track visit for dashboard recent pages ok
+        (function() {
+            let h = JSON.parse(localStorage.getItem('scc_page_history') || '[]');
+            h = ['Analyticss.html', ...h.filter(p => p !== 'Analyticss.html')].slice(0, 10);
+            localStorage.setItem('scc_page_history', JSON.stringify(h));
+        })();
+
+        document.addEventListener('click', event => {
+            const exportLink = event.target.closest('#btn-pdf');
+            if (!exportLink) return;
+
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            const activeTab = document.querySelector('.CourseTab.active');
+            const selectedFilter = activeTab ? activeTab.dataset.filter : 'all';
+            const exportUrl = selectedFilter !== 'all'
+                ? `${API}/analytics/export/pdf?courseId=${encodeURIComponent(selectedFilter)}`
+                : `${API}/analytics/export/pdf`;
+
+            window.location.href = exportUrl;
+        }, true);
+
+        loadAnalytics();
+    </script>
+
+    </body>
+</html>

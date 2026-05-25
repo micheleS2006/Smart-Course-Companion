@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Course Companion - My Account</title>
+    <link rel="stylesheet" href="/myaccount.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <h2>Smart Course Companion</h2>
+    <ul>
+        <li><a href="/student/dashboard">Dashboard</a></li>
+        <li><a href="/MYCOURSES.html">My Courses</a></li>
+        <li><a href="/analytics.html">Analytics</a></li>
+    </ul>
+    <div class="nav-icons">
+        <div class="myaccount">
+            <a href="/student/settings-page">
+                <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png"
+                    alt="My Account">
+            </a>
+        </div>
+        <div class="logout">
+            <a href="/auth/logout">
+                <img src="https://www.clipartmax.com/png/middle/36-367350_png-file-logout-icon.png"
+                    alt="Logout">
+            </a>
+        </div>
+    </div>
+</nav>
+
+<main class="content">
+    <h1>My Account</h1>
+    <div id="accountStatus" class="account-status" hidden></div>
+
+    <div class="account-container">
+        <div class="account-card">
+            <h2>Student Information</h2>
+            <p><strong>Name:</strong> <span id="studentName">Loading...</span></p>
+            <p><strong>Student Number:</strong> <span id="studentNumber">Loading...</span></p>
+            <p><strong>Email:</strong> <span id="studentEmail">Loading...</span></p>
+            <p><strong>Account Created:</strong> <span id="studentCreatedAt">Loading...</span></p>
+        </div>
+
+        <div class="account-card">
+            <h2>Current Semester Courses</h2>
+            <ul id="courseList" class="course-list">
+                <li class="account-empty">Loading courses...</li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<script src="/nav-active.js"></script>
+<script src="/myaccount.js"></script>
+</body>
+</html>
